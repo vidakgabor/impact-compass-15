@@ -163,3 +163,67 @@ export const szervezokKimenetiExtra = {
   sokkNemPct: Math.round((szervezokKimeneti.sokkElsoTalalkozas.nem / szervezokKimeneti.n) * 100),
   problemaMunkavalAtlag: Math.round(mean(szervezokKimeneti.problemaMunkaval) * 100) / 100,
 };
+
+// ============================================================
+// BOGARDUS-FÉLE TÁRSADALMI TÁVOLSÁG SKÁLA
+// Szervezők (ELTE hallgatók) - Bemeneti: Q13, Kimeneti: Q11
+// N = 44, Csoportok: Arab, Zsidó, Roma, Homoszexuális, Hajléktalan
+// Szintek: Családtagom, Barátom, Munkatársam, Szomszédom
+// Értékek: hány fő fogadta el az adott csoportot az adott szinten
+// ============================================================
+
+export interface BogardusGroup {
+  name: string;
+  pre: { csalad: number; barat: number; munkatars: number; szomszed: number };
+  post: { csalad: number; barat: number; munkatars: number; szomszed: number };
+}
+
+export const bogardusN = 44;
+
+export const bogardusGroups: BogardusGroup[] = [
+  {
+    name: "Arab",
+    pre:  { csalad: 32, barat: 39, munkatars: 37, szomszed: 38 },
+    post: { csalad: 36, barat: 37, munkatars: 39, szomszed: 39 },
+  },
+  {
+    name: "Zsidó",
+    pre:  { csalad: 39, barat: 40, munkatars: 42, szomszed: 40 },
+    post: { csalad: 37, barat: 36, munkatars: 37, szomszed: 36 },
+  },
+  {
+    name: "Roma",
+    pre:  { csalad: 36, barat: 42, munkatars: 40, szomszed: 40 },
+    post: { csalad: 40, barat: 39, munkatars: 36, szomszed: 38 },
+  },
+  {
+    name: "Homoszexuális",
+    pre:  { csalad: 42, barat: 40, munkatars: 39, szomszed: 40 },
+    post: { csalad: 39, barat: 37, munkatars: 38, szomszed: 37 },
+  },
+  {
+    name: "Hajléktalan",
+    pre:  { csalad: 25, barat: 30, munkatars: 24, szomszed: 14 },
+    post: { csalad: 30, barat: 32, munkatars: 29, szomszed: 13 },
+  },
+];
+
+// Elfogadási arány %-ban
+export function bogardusAcceptancePct(count: number): number {
+  return Math.round((count / bogardusN) * 1000) / 10;
+}
+
+// Átlagos elfogadási arány egy csoport összes szintjén
+export function bogardusGroupAvg(g: BogardusGroup["pre"] | BogardusGroup["post"]): number {
+  return Math.round(((g.csalad + g.barat + g.munkatars + g.szomszed) / 4 / bogardusN) * 1000) / 10;
+}
+
+// Társadalmi távolság index: alacsonyabb = nagyobb elfogadás (1-5 skála, Bogardus)
+// 1 = teljes elfogadás (család), 5 = teljes elutasítás
+export function bogardusDistanceIndex(g: BogardusGroup["pre"] | BogardusGroup["post"]): number {
+  const totalAccepted = g.csalad + g.barat + g.munkatars + g.szomszed;
+  const maxPossible = bogardusN * 4;
+  // Fordított skálán: 1 = teljes elfogadás, 5 = teljes elutasítás
+  const acceptance = totalAccepted / maxPossible;
+  return Math.round((5 - acceptance * 4) * 100) / 100;
+}

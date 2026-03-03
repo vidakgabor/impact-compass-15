@@ -8,6 +8,7 @@ import {
 } from "@/data/researchData";
 import { TrendingUp, TrendingDown, Users, GraduationCap, BarChart3, Target, Heart, MessageCircle } from "lucide-react";
 import type { ComparisonMetric } from "@/data/researchData";
+import BogardusSection from "@/components/BogardusSection";
 
 const fadeIn = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
@@ -211,6 +212,17 @@ export default function Index() {
             </div>
           </div>
         </section>
+
+        {/* BOGARDUS ELŐÍTÉLET MÉRÉS */}
+        <section>
+          <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Bogardus-féle Előítélet Mérés
+          </h2>
+          <p className="text-muted-foreground mb-8">
+            Szervezők (ELTE hallgatók, N=44) — Társadalmi távolság mérése öt érzékeny csoporttal szemben, bemeneti és kimeneti összehasonlítás
+          </p>
+        </section>
+        <BogardusSection />
 
         {/* Összegzés */}
         <section className="stat-card bg-primary/5 border-primary/20">
