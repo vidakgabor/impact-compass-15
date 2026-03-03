@@ -47,6 +47,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        chart: {
+          positive: "hsl(var(--chart-positive))",
+          negative: "hsl(var(--chart-negative))",
+          pre: "hsl(var(--chart-pre))",
+          post: "hsl(var(--chart-post))",
+          neutral: "hsl(var(--chart-neutral))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
