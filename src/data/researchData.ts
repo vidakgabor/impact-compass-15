@@ -227,3 +227,226 @@ export function bogardusDistanceIndex(g: BogardusGroup["pre"] | BogardusGroup["p
   const acceptance = totalAccepted / maxPossible;
   return Math.round((5 - acceptance * 4) * 100) / 100;
 }
+
+// ============================================================
+// VÁRAKOZÁSOK vs. EREDMÉNYEK (Q15 bemeneti vs. kimeneti)
+// Résztvevők (hátrányos helyzetű fiatalok)
+// ============================================================
+
+// Bemeneti Q15: "Mit vársz a részvételi filmes műhelytől?" (N=70, multi-select)
+export const varakozasokRaw: string[] = [
+  "tanulok valami újat, megismerek más embereket",
+  "megismerek más embereket, jobban megismerem magam",
+  "tanulok valami újat",
+  "jobban megismerem magam",
+  "tanulok valami újat",
+  "megismerek más embereket",
+  "megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat",
+  "tanulok valami újat",
+  "tanulok valami újat",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "megismerek más embereket",
+  "tanulok valami újat",
+  "megismerek más embereket",
+  "megismerek más embereket, jobban megismerem magam",
+  "tanulok valami újat, jobban megismerem magam",
+  "megismerek más embereket, jobban megismerem magam",
+  "nem várok semmit",
+  "megismerek más embereket",
+  "egyéb:",
+  "tanulok valami újat",
+  "tanulok valami újat",
+  "megismerek más embereket, jobban megismerem magam",
+  "megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "nem várok semmit",
+  "megismerek más embereket",
+  "megismerek más embereket",
+  "megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket, egyéb:",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, jobban megismerem magam",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, jobban megismerem magam",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "nem várok semmit",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "tanulok valami újat",
+  "tanulok valami újat, megismerek más embereket",
+  "megismerek más embereket",
+  "nem várok semmit",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "tanulok valami újat, megismerek más embereket, jobban megismerem magam",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, megismerek más embereket",
+  "tanulok valami újat, jobban megismerem magam",
+];
+
+// Kimeneti Q15: "Mit kaptál a részvételi filmes műhelytől?" (N=63, multi-select)
+export const eredmenyekRaw: string[] = [
+  "új dolgokat megtudtam magamról",
+  "megismerhettem új embereket",
+  "megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "jobban megismertem önmagam",
+  "megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, jobban megismertem önmagam",
+  "megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam, egyéb:",
+  "megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, egyéb:",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, egyéb:",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam, egyéb:",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, jobban megismertem önmagam, nem kaptam semmit",
+  "megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, egyéb:",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, egyéb:",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, egyéb:",
+  "új dolgokat megtudtam magamról, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "megismerhettem új embereket, jobban megismertem önmagam, egyéb:",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "megismerhettem új embereket, jobban megismertem önmagam, egyéb:",
+  "megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket, jobban megismertem önmagam",
+  "új dolgokat megtudtam magamról, megismerhettem új embereket",
+];
+
+// Kimeneti Q19: "Mi az amit változtatnál a programban?" (N=63)
+export const valtoztatasokRaw: string[] = [
+  "Semmi","Semmit","Semmit minden így volt jó","Minden tökéletes","Semmi","Semmit","Semmit","Semmit",
+  "Semmin","Semmin","Több jatek lehetne","Semmit","Semmit","Semmin","Minden jó volt","Több játék lehetne",
+  "Lehetne hosszabb a program","Legyen hosszabb :)","Semmin","Semmi","Legyen több játék","Semmi",
+  "Még több videót forgassunk","Semmit","Legyen hosszabb","Semmi","Minden jó volt","Semmi",
+  "Szuper program volt","Jó volt","Több játékot szeretnék","Semmi","Semmi","Semmin","Semmit","semmit",
+  "Semmit","Több foci","minden jó volt","Nagyon jó volt így","Nem","Legyenek pacik","semi",
+  "Több játék","Semmi","Legyen hosszabb","Semmin","Semmi","Minden jó volt","Legyen több játék",
+  "Több forgatás lehetne több témában","Lehetne több csapatépítő játék","Semmin","Jó volt minden",
+  "Semmin","Semmi","Legyen több ilyen program","Legyen több játék","Több szünet :)","Minden szuper volt",
+  "Semmin","Semmi","Semmi",
+];
+
+// Kategorizáló függvények
+export interface CategoryCount {
+  category: string;
+  count: number;
+  pct: number;
+}
+
+export function countExpectationCategories(responses: string[], categories: { keyword: string; label: string }[]): CategoryCount[] {
+  const n = responses.length;
+  return categories.map(c => {
+    const count = responses.filter(r => r.toLowerCase().includes(c.keyword.toLowerCase())).length;
+    return { category: c.label, count, pct: Math.round((count / n) * 100) };
+  });
+}
+
+export const varakozasCategories = [
+  { keyword: "tanulok valami újat", label: "Tanulás" },
+  { keyword: "megismerek más embereket", label: "Ismerkedés" },
+  { keyword: "jobban megismerem magam", label: "Önismeret" },
+  { keyword: "nem várok semmit", label: "Nem vár semmit" },
+];
+
+export const eredmenyCategories = [
+  { keyword: "új dolgokat megtudtam magamról", label: "Tanulás (önmagáról)" },
+  { keyword: "megismerhettem új embereket", label: "Ismerkedés" },
+  { keyword: "jobban megismertem önmagam", label: "Önismeret" },
+  { keyword: "nem kaptam semmit", label: "Nem kapott semmit" },
+];
+
+export function categorizeValtoztatasok(responses: string[]): CategoryCount[] {
+  const n = responses.length;
+  const categories: Record<string, number> = {
+    "Elégedett (nem változtatna)": 0,
+    "Több játékot": 0,
+    "Hosszabb program": 0,
+    "Több forgatás/videó": 0,
+    "Több ilyen program": 0,
+    "Egyéb javaslat": 0,
+  };
+
+  responses.forEach(r => {
+    const low = r.toLowerCase().trim();
+    if (/^(semmi[tn]?|semi|nem|minden.*jó|jó volt|szuper|nagyon jó|minden tökéletes)/.test(low)) {
+      categories["Elégedett (nem változtatna)"]++;
+    } else if (/játék|foci/.test(low)) {
+      categories["Több játékot"]++;
+    } else if (/hosszabb/.test(low)) {
+      categories["Hosszabb program"]++;
+    } else if (/forgat|videó/.test(low)) {
+      categories["Több forgatás/videó"]++;
+    } else if (/több ilyen/.test(low)) {
+      categories["Több ilyen program"]++;
+    } else {
+      categories["Egyéb javaslat"]++;
+    }
+  });
+
+  return Object.entries(categories)
+    .map(([category, count]) => ({ category, count, pct: Math.round((count / n) * 100) }))
+    .filter(c => c.count > 0)
+    .sort((a, b) => b.count - a.count);
+}
