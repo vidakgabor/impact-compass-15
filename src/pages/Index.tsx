@@ -214,6 +214,9 @@ export default function Index() {
           </div>
         </section>
 
+        {/* VÁRAKOZÁSOK vs. EREDMÉNYEK */}
+        <ExpectationsSection />
+
         {/* BOGARDUS ELŐÍTÉLET MÉRÉS */}
         <section>
           <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
