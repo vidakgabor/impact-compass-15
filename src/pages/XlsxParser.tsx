@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 
 export default function XlsxParser() {
-  const [bemeneti, setBemeneti] = useState<string[][]>([]);
-  const [kimeneti, setKimeneti] = useState<string[][]>([]);
+  const [data, setData] = useState<string>("loading...");
 
   useEffect(() => {
     async function load() {
@@ -22,42 +21,29 @@ export default function XlsxParser() {
       const bData = XLSX.utils.sheet_to_json<string[]>(bSheet, { header: 1 });
       const kData = XLSX.utils.sheet_to_json<string[]>(kSheet, { header: 1 });
       
-      setBemeneti(bData);
-      setKimeneti(kData);
+      // Bemeneti Q15 (col index 15): "Mit vársz a részvételi filmes műhelytől?"
+      const bQ15 = bData.slice(1).map(r => String(r[15] || "")).filter(Boolean);
+      
+      // Kimeneti Q15 (col index 15): "Mit kaptál a részvételi filmes műhelytől?"
+      const kQ15 = kData.slice(1).map(r => String(r[15] || "")).filter(Boolean);
+      
+      // Kimeneti Q19 (col index 19): "Mi az amit változtatnál a programban?"
+      const kQ19 = kData.slice(1).map(r => String(r[19] || "")).filter(Boolean);
+      
+      const output = {
+        bemeneti_q15_mit_varsz: bQ15,
+        kimeneti_q15_mit_kaptal: kQ15,
+        kimeneti_q19_mit_valtoztatnal: kQ19,
+      };
+      
+      setData(JSON.stringify(output, null, 2));
     }
     load();
   }, []);
 
   return (
-    <div style={{ padding: 20, fontFamily: "monospace", fontSize: 11 }}>
-      <h2>BEMENETI - First row (headers):</h2>
-      {bemeneti.length > 0 && (
-        <div>
-          {(bemeneti[0] || []).map((h, i) => (
-            <div key={i}><strong>Col {i}:</strong> {String(h)}</div>
-          ))}
-        </div>
-      )}
-      
-      <h2 style={{marginTop: 20}}>BEMENETI - Q15 area (cols around index 14-16), all rows:</h2>
-      <pre>{JSON.stringify(bemeneti.slice(0, 3).map(r => r.slice(12, 20)), null, 2)}</pre>
-      
-      <h2 style={{marginTop: 20}}>BEMENETI - All column headers with indices:</h2>
-      <pre>{bemeneti.length > 0 ? bemeneti[0].map((h, i) => `${i}: ${h}`).join("\n") : "loading..."}</pre>
-
-      <hr style={{margin: "30px 0"}} />
-
-      <h2>KIMENETI - All column headers with indices:</h2>
-      <pre>{kimeneti.length > 0 ? kimeneti[0].map((h, i) => `${i}: ${h}`).join("\n") : "loading..."}</pre>
-      
-      <h2 style={{marginTop: 20}}>KIMENETI - Last columns (potential open questions):</h2>
-      <pre>{kimeneti.length > 0 ? JSON.stringify(kimeneti.slice(0, 3).map(r => r.slice(-6)), null, 2) : "loading..."}</pre>
-
-      <h2 style={{marginTop: 20}}>BEMENETI full row 1 (first response):</h2>
-      <pre>{bemeneti.length > 1 ? JSON.stringify(bemeneti[1], null, 2) : "loading..."}</pre>
-
-      <h2 style={{marginTop: 20}}>KIMENETI full row 1 (first response):</h2>
-      <pre>{kimeneti.length > 1 ? JSON.stringify(kimeneti[1], null, 2) : "loading..."}</pre>
+    <div style={{ padding: 20, fontFamily: "monospace", fontSize: 11, whiteSpace: "pre-wrap" }}>
+      {data}
     </div>
   );
 }
