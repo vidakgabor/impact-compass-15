@@ -9,6 +9,7 @@ import {
 import { TrendingUp, TrendingDown, Users, GraduationCap, BarChart3, Target, Heart, MessageCircle } from "lucide-react";
 import type { ComparisonMetric } from "@/data/researchData";
 import BogardusSection from "@/components/BogardusSection";
+import ExpectationsSection from "@/components/ExpectationsSection";
 
 const fadeIn = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
@@ -212,6 +213,9 @@ export default function Index() {
             </div>
           </div>
         </section>
+
+        {/* VÁRAKOZÁSOK vs. EREDMÉNYEK */}
+        <ExpectationsSection />
 
         {/* BOGARDUS ELŐÍTÉLET MÉRÉS */}
         <section>
