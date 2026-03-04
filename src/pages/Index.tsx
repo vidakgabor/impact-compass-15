@@ -218,6 +218,9 @@ export default function Index() {
         {/* VÁRAKOZÁSOK vs. EREDMÉNYEK */}
         <ExpectationsSection />
 
+        {/* STATISZTIKAI SZIGNIFIKANCIA TESZTEK */}
+        <SignificanceSection />
+
         {/* BOGARDUS ELŐÍTÉLET MÉRÉS */}
         <section>
           <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
