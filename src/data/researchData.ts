@@ -100,6 +100,198 @@ export function distribution(arr: number[], maxVal: number): { value: number; co
 }
 
 // ============================================================
+// STATISZTIKAI SZIGNIFIKANCIA TESZTEK
+// Welch's t-test (független minták, eltérő variancia és N)
+// ============================================================
+
+// Standard normal CDF approximation (Abramowitz & Stegun)
+function normalCDF(x: number): number {
+  const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429;
+  const p = 0.3275911;
+  const sign = x < 0 ? -1 : 1;
+  x = Math.abs(x) / Math.sqrt(2);
+  const t = 1.0 / (1.0 + p * x);
+  const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+  return 0.5 * (1.0 + sign * y);
+}
+
+// t-distribution CDF approximation using normal for df > 30, otherwise Hill's approx
+function tCDF(t: number, df: number): number {
+  // For large df, t approaches normal
+  if (df > 100) return normalCDF(t);
+  
+  // Regularized incomplete beta function approximation for t-distribution
+  const x = df / (df + t * t);
+  const a = df / 2;
+  const b = 0.5;
+  
+  // Use series expansion for regularized incomplete beta
+  let betaI = incompleteBeta(x, a, b);
+  
+  if (t >= 0) return 1 - 0.5 * betaI;
+  return 0.5 * betaI;
+}
+
+// Log gamma function (Lanczos approximation)
+function logGamma(z: number): number {
+  const g = 7;
+  const c = [
+    0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+    771.32342877765313, -176.61502916214059, 12.507343278686905,
+    -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7,
+  ];
+  if (z < 0.5) {
+    return Math.log(Math.PI / Math.sin(Math.PI * z)) - logGamma(1 - z);
+  }
+  z -= 1;
+  let x = c[0];
+  for (let i = 1; i < g + 2; i++) x += c[i] / (z + i);
+  const t2 = z + g + 0.5;
+  return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t2) - t2 + Math.log(x);
+}
+
+// Regularized incomplete beta function
+function incompleteBeta(x: number, a: number, b: number): number {
+  if (x === 0 || x === 1) return x;
+  
+  // Use continued fraction representation
+  const lnBeta = logGamma(a) + logGamma(b) - logGamma(a + b);
+  const front = Math.exp(Math.log(x) * a + Math.log(1 - x) * b - lnBeta);
+  
+  if (x < (a + 1) / (a + b + 2)) {
+    return front * betaCF(x, a, b) / a;
+  }
+  return 1 - front * betaCF(1 - x, b, a) / b;
+}
+
+// Continued fraction for incomplete beta
+function betaCF(x: number, a: number, b: number): number {
+  const maxIter = 200;
+  const eps = 3e-12;
+  let qab = a + b, qap = a + 1, qam = a - 1;
+  let c = 1, d = 1 - qab * x / qap;
+  if (Math.abs(d) < 1e-30) d = 1e-30;
+  d = 1 / d;
+  let h = d;
+  
+  for (let m = 1; m <= maxIter; m++) {
+    const m2 = 2 * m;
+    let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d;
+    c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30;
+    h *= d * c;
+    
+    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d;
+    c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30;
+    const del = d * c;
+    h *= del;
+    
+    if (Math.abs(del - 1) < eps) break;
+  }
+  return h;
+}
+
+export interface SignificanceResult {
+  name: string;
+  group: "Résztvevők" | "Szervezők";
+  preMean: number;
+  postMean: number;
+  preSD: number;
+  postSD: number;
+  preN: number;
+  postN: number;
+  tStatistic: number;
+  degreesOfFreedom: number;
+  pValue: number;
+  cohenD: number;
+  significant005: boolean;
+  significant001: boolean;
+  effectSize: "elhanyagolható" | "kicsi" | "közepes" | "nagy";
+}
+
+export function welchTTest(pre: number[], post: number[]): { t: number; df: number; p: number } {
+  const n1 = pre.length, n2 = post.length;
+  const m1 = mean(pre), m2 = mean(post);
+  // Use sample SD (Bessel's correction)
+  const s1sq = pre.reduce((s, v) => s + (v - m1) ** 2, 0) / (n1 - 1);
+  const s2sq = post.reduce((s, v) => s + (v - m2) ** 2, 0) / (n2 - 1);
+  
+  const se = Math.sqrt(s1sq / n1 + s2sq / n2);
+  const t = (m2 - m1) / se;
+  
+  // Welch-Satterthwaite degrees of freedom
+  const num = (s1sq / n1 + s2sq / n2) ** 2;
+  const den = (s1sq / n1) ** 2 / (n1 - 1) + (s2sq / n2) ** 2 / (n2 - 1);
+  const df = num / den;
+  
+  // Two-tailed p-value
+  const p = 2 * (1 - tCDF(Math.abs(t), df));
+  
+  return { t: Math.round(t * 1000) / 1000, df: Math.round(df * 10) / 10, p: Math.round(p * 10000) / 10000 };
+}
+
+export function cohenD(pre: number[], post: number[]): number {
+  const m1 = mean(pre), m2 = mean(post);
+  const n1 = pre.length, n2 = post.length;
+  const s1sq = pre.reduce((s, v) => s + (v - m1) ** 2, 0) / (n1 - 1);
+  const s2sq = post.reduce((s, v) => s + (v - m2) ** 2, 0) / (n2 - 1);
+  // Pooled SD
+  const pooledSD = Math.sqrt(((n1 - 1) * s1sq + (n2 - 1) * s2sq) / (n1 + n2 - 2));
+  return Math.round(((m2 - m1) / pooledSD) * 1000) / 1000;
+}
+
+function effectSizeLabel(d: number): "elhanyagolható" | "kicsi" | "közepes" | "nagy" {
+  const abs = Math.abs(d);
+  if (abs < 0.2) return "elhanyagolható";
+  if (abs < 0.5) return "kicsi";
+  if (abs < 0.8) return "közepes";
+  return "nagy";
+}
+
+function createSignificanceResult(name: string, group: "Résztvevők" | "Szervezők", pre: number[], post: number[]): SignificanceResult {
+  const test = welchTTest(pre, post);
+  const d = cohenD(pre, post);
+  const m1 = mean(pre), m2 = mean(post);
+  const n1 = pre.length, n2 = post.length;
+  const s1 = Math.sqrt(pre.reduce((s, v) => s + (v - m1) ** 2, 0) / (n1 - 1));
+  const s2 = Math.sqrt(post.reduce((s, v) => s + (v - m2) ** 2, 0) / (n2 - 1));
+  
+  return {
+    name, group,
+    preMean: Math.round(m1 * 100) / 100,
+    postMean: Math.round(m2 * 100) / 100,
+    preSD: Math.round(s1 * 100) / 100,
+    postSD: Math.round(s2 * 100) / 100,
+    preN: n1, postN: n2,
+    tStatistic: test.t,
+    degreesOfFreedom: test.df,
+    pValue: test.p,
+    cohenD: d,
+    significant005: test.p < 0.05,
+    significant001: test.p < 0.01,
+    effectSize: effectSizeLabel(d),
+  };
+}
+
+export const resztvevokSignificance: SignificanceResult[] = [
+  createSignificanceResult("Szabálykövetés", "Résztvevők", resztvevokBemeneti.szabalykoveto, resztvevokKimeneti.szabalykoveto),
+  createSignificanceResult("Nyitottság új dolgokra", "Résztvevők", resztvevokBemeneti.nyitott, resztvevokKimeneti.nyitott),
+  createSignificanceResult("Megbízhatóság, pontosság", "Résztvevők", resztvevokBemeneti.megbizhato, resztvevokKimeneti.megbizhato),
+  createSignificanceResult("Jövőkép (1-3 skála)", "Résztvevők", resztvevokBemeneti.jovokep, resztvevokKimeneti.jovokep),
+];
+
+export const szervezokSignificance: SignificanceResult[] = [
+  createSignificanceResult("Kellő információ a célcsoportról", "Szervezők", szervezokBemeneti.kelloInfo, szervezokKimeneti.kelloInfo),
+  createSignificanceResult("Önismeret", "Szervezők", szervezokBemeneti.onismeret, szervezokKimeneti.onismeret),
+  createSignificanceResult("Empátia", "Szervezők", szervezokBemeneti.empatia, szervezokKimeneti.empatia),
+  createSignificanceResult("Motiváció", "Szervezők", szervezokBemeneti.motivacio, szervezokKimeneti.motivacio),
+  createSignificanceResult("Csapatmunka", "Szervezők", szervezokBemeneti.csapatmunka, szervezokKimeneti.csapatmunka),
+  createSignificanceResult("Konfliktuskezelés", "Szervezők", szervezokBemeneti.konfliktuskezeles, szervezokKimeneti.konfliktuskezeles),
+  createSignificanceResult("Kommunikáció", "Szervezők", szervezokBemeneti.kommunikacio, szervezokKimeneti.kommunikacio),
+];
+
+// ============================================================
 // ÖSSZESÍTETT EREDMÉNYEK
 // ============================================================
 

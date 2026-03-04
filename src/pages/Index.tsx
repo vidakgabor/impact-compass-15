@@ -10,6 +10,7 @@ import { TrendingUp, TrendingDown, Users, GraduationCap, BarChart3, Target, Hear
 import type { ComparisonMetric } from "@/data/researchData";
 import BogardusSection from "@/components/BogardusSection";
 import ExpectationsSection from "@/components/ExpectationsSection";
+import SignificanceSection from "@/components/SignificanceSection";
 
 const fadeIn = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
@@ -216,6 +217,9 @@ export default function Index() {
 
         {/* VÁRAKOZÁSOK vs. EREDMÉNYEK */}
         <ExpectationsSection />
+
+        {/* STATISZTIKAI SZIGNIFIKANCIA TESZTEK */}
+        <SignificanceSection />
 
         {/* BOGARDUS ELŐÍTÉLET MÉRÉS */}
         <section>
