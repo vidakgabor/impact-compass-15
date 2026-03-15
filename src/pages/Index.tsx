@@ -263,12 +263,39 @@ export default function Index() {
               </ul>
             </div>
           </div>
-          <div className="mt-6 p-4 rounded-lg bg-accent/10 border border-accent/20">
-            <p className="text-sm font-medium text-foreground">
-              <strong>Hipotézisek vonatkozásában:</strong> Az eredmények alátámasztják a H3 (személyes fejlődés, önbizalom növekedés) és H4 (szociális kompetenciák fejlődése) hipotéziseket. 
-              A részvételi filmezés mind a hátrányos helyzetű fiatalok, mind az ELTE hallgatók szociális kompetenciáit fejlesztette, az előítéletek csökkentéséhez hozzájárult (H7), 
-              és a közös munka révén a társas kompetenciák is javultak.
-            </p>
+          <div className="mt-6 p-4 rounded-lg bg-accent/10 border border-accent/20 space-y-4">
+            <h3 className="font-bold text-base text-primary">Kutatási kérdések és hipotézisek</h3>
+            <div className="grid md:grid-cols-2 gap-4 text-sm text-muted-foreground">
+              <div className="space-y-3">
+                <div>
+                  <p className="font-semibold text-foreground">RQ1 — Rövid távú pedagógiai hatások (HH fiatalok)</p>
+                  <p className="italic">Milyen rövid távú változások azonosíthatók a tanulási motivációban, önhatékonyság-érzetben és szociális kompetenciákban?</p>
+                  <p className="mt-1"><strong className="text-foreground">H1:</strong> A workshopot követően a résztvevők tanulási motiváció- és önhatékonyság-értékei szignifikáns pozitív irányú elmozdulást mutatnak a bemeneti méréshez képest.</p>
+                  <p className="mt-1 change-positive text-xs font-semibold">✓ Alátámasztva — A nyitottság ({resztvevokMetrics[1].changePct > 0 ? "+" : ""}{resztvevokMetrics[1].changePct}%), megbízhatóság ({resztvevokMetrics[2].changePct > 0 ? "+" : ""}{resztvevokMetrics[2].changePct}%) és jövőkép ({resztvevokMetrics[3].changePct > 0 ? "+" : ""}{resztvevokMetrics[3].changePct}%) szignifikáns pozitív elmozdulást mutat.</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">RQ2 — Hosszútávú hatások (HH fiatalok)</p>
+                  <p className="italic">Azonosíthatók-e tartós változások a longitudinális utánkövetés során?</p>
+                  <p className="mt-1"><strong className="text-foreground">H2:</strong> A longitudinális utánkövetés során mért motivációs és kompetenciaértékek magasabb szinten maradnak a bemeneti méréshez képest.</p>
+                  <p className="mt-1 text-xs font-semibold text-muted-foreground">⏳ Vizsgálat folyamatban — Az utánkövetés 2026. március végéig tart.</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <p className="font-semibold text-foreground">RQ3 — Attitűdváltozás (egyetemi hallgatók)</p>
+                  <p className="italic">Kimutatható-e változás a romákkal szembeni társadalmi távolságban a Bogardus-skála alapján?</p>
+                  <p className="mt-1"><strong className="text-foreground">H3a:</strong> A workshopot követően csökken a romákkal szembeni társadalmi távolság mértéke a bemeneti méréshez képest.</p>
+                  <p className="mt-1 change-positive text-xs font-semibold">✓ Alátámasztva — A Bogardus-skálán a romákkal szembeni társadalmi távolság csökkent.</p>
+                  <p className="mt-2"><strong className="text-foreground">H3b:</strong> Az attitűdváltozás mértéke pozitív összefüggést mutat a résztvevők által jelzett bevonódási szinttel.</p>
+                  <p className="mt-1 text-xs font-semibold text-muted-foreground">⏳ Részletes elemzés a hosszútávú vizsgálatban.</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">RQ4 — Szubjektív tanulási élmények (kvalitatív)</p>
+                  <p className="italic">Milyen tanulási élmények és személyes értelmezések jelennek meg a résztvevők beszámolóiban?</p>
+                  <p className="mt-1 text-xs">Statisztikai hipotézis nem kapcsolódik hozzá — kvalitatív elemzés a nyitott kérdések és kisfilmek alapján.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
