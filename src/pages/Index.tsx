@@ -11,6 +11,7 @@ import type { ComparisonMetric } from "@/data/researchData";
 import BogardusSection from "@/components/BogardusSection";
 import ExpectationsSection from "@/components/ExpectationsSection";
 import SignificanceSection from "@/components/SignificanceSection";
+import LocationSection from "@/components/LocationSection";
 
 const fadeIn = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
@@ -220,6 +221,9 @@ export default function Index() {
 
         {/* STATISZTIKAI SZIGNIFIKANCIA TESZTEK */}
         <SignificanceSection />
+
+        {/* HELYSZÍNENKÉNTI BONTÁS */}
+        <LocationSection />
 
         {/* BOGARDUS ELŐÍTÉLET MÉRÉS */}
         <section>
