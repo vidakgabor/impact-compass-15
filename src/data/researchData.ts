@@ -877,35 +877,3 @@ export function computeLocationSummaries(): LocationSummary[] {
 }
 
 export const locationSummaries = computeLocationSummaries();
-  const n = responses.length;
-  const categories: Record<string, number> = {
-    "Elégedett (nem változtatna)": 0,
-    "Több játékot": 0,
-    "Hosszabb program": 0,
-    "Több forgatás/videó": 0,
-    "Több ilyen program": 0,
-    "Egyéb javaslat": 0,
-  };
-
-  responses.forEach(r => {
-    const low = r.toLowerCase().trim();
-    if (/^(semmi[tn]?|semi|nem|minden.*jó|jó volt|szuper|nagyon jó|minden tökéletes)/.test(low)) {
-      categories["Elégedett (nem változtatna)"]++;
-    } else if (/játék|foci/.test(low)) {
-      categories["Több játékot"]++;
-    } else if (/hosszabb/.test(low)) {
-      categories["Hosszabb program"]++;
-    } else if (/forgat|videó/.test(low)) {
-      categories["Több forgatás/videó"]++;
-    } else if (/több ilyen/.test(low)) {
-      categories["Több ilyen program"]++;
-    } else {
-      categories["Egyéb javaslat"]++;
-    }
-  });
-
-  return Object.entries(categories)
-    .map(([category, count]) => ({ category, count, pct: Math.round((count / n) * 100) }))
-    .filter(c => c.count > 0)
-    .sort((a, b) => b.count - a.count);
-}
