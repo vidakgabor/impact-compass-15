@@ -222,6 +222,9 @@ export default function Index() {
         {/* STATISZTIKAI SZIGNIFIKANCIA TESZTEK */}
         <SignificanceSection />
 
+        {/* HELYSZÍNENKÉNTI BONTÁS */}
+        <LocationSection />
+
         {/* BOGARDUS ELŐÍTÉLET MÉRÉS */}
         <section>
           <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
