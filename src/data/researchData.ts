@@ -642,3 +642,270 @@ export function categorizeValtoztatasok(responses: string[]): CategoryCount[] {
     .filter(c => c.count > 0)
     .sort((a, b) => b.count - a.count);
 }
+
+// ============================================================
+// HELYSZÍNENKÉNTI BONTÁS
+// ============================================================
+
+export interface LocationData {
+  name: string;
+  resztvevok: {
+    pre: { n: number; szabalykoveto: number[]; nyitott: number[]; megbizhato: number[]; jovokep: number[] };
+    post: { n: number; szabalykoveto: number[]; nyitott: number[]; megbizhato: number[]; jovokep: number[]; elegedettseg: number[] };
+  };
+  szervezok: {
+    pre: { n: number; kelloInfo: number[]; onismeret: number[]; empatia: number[]; motivacio: number[]; csapatmunka: number[]; konfliktuskezeles: number[]; kommunikacio: number[] };
+    post: { n: number; kelloInfo: number[]; onismeret: number[]; empatia: number[]; motivacio: number[]; csapatmunka: number[]; konfliktuskezeles: number[]; kommunikacio: number[] };
+  };
+}
+
+function sliceArr(arr: number[], start: number, end: number): number[] {
+  return arr.slice(start, end);
+}
+
+export const locationData: LocationData[] = [
+  {
+    name: "Istvándi",
+    resztvevok: {
+      pre: {
+        n: 17,
+        szabalykoveto: sliceArr(resztvevokBemeneti.szabalykoveto, 0, 17),
+        nyitott: sliceArr(resztvevokBemeneti.nyitott, 0, 17),
+        megbizhato: sliceArr(resztvevokBemeneti.megbizhato, 0, 17),
+        jovokep: sliceArr(resztvevokBemeneti.jovokep, 0, 17),
+      },
+      post: {
+        n: 17,
+        szabalykoveto: sliceArr(resztvevokKimeneti.szabalykoveto, 0, 17),
+        nyitott: sliceArr(resztvevokKimeneti.nyitott, 0, 17),
+        megbizhato: sliceArr(resztvevokKimeneti.megbizhato, 0, 17),
+        jovokep: sliceArr(resztvevokKimeneti.jovokep, 0, 17),
+        elegedettseg: sliceArr(resztvevokKimeneti.elegedettseg, 0, 17),
+      },
+    },
+    szervezok: {
+      pre: {
+        n: 14,
+        kelloInfo: sliceArr(szervezokBemeneti.kelloInfo, 0, 14),
+        onismeret: sliceArr(szervezokBemeneti.onismeret, 0, 14),
+        empatia: sliceArr(szervezokBemeneti.empatia, 0, 14),
+        motivacio: sliceArr(szervezokBemeneti.motivacio, 0, 14),
+        csapatmunka: sliceArr(szervezokBemeneti.csapatmunka, 0, 14),
+        konfliktuskezeles: sliceArr(szervezokBemeneti.konfliktuskezeles, 0, 14),
+        kommunikacio: sliceArr(szervezokBemeneti.kommunikacio, 0, 14),
+      },
+      post: {
+        n: 14,
+        kelloInfo: sliceArr(szervezokKimeneti.kelloInfo, 0, 14),
+        onismeret: sliceArr(szervezokKimeneti.onismeret, 0, 14),
+        empatia: sliceArr(szervezokKimeneti.empatia, 0, 14),
+        motivacio: sliceArr(szervezokKimeneti.motivacio, 0, 14),
+        csapatmunka: sliceArr(szervezokKimeneti.csapatmunka, 0, 14),
+        konfliktuskezeles: sliceArr(szervezokKimeneti.konfliktuskezeles, 0, 14),
+        kommunikacio: sliceArr(szervezokKimeneti.kommunikacio, 0, 14),
+      },
+    },
+  },
+  {
+    name: "Pécs",
+    resztvevok: {
+      pre: {
+        n: 17,
+        szabalykoveto: sliceArr(resztvevokBemeneti.szabalykoveto, 17, 34),
+        nyitott: sliceArr(resztvevokBemeneti.nyitott, 17, 34),
+        megbizhato: sliceArr(resztvevokBemeneti.megbizhato, 17, 34),
+        jovokep: sliceArr(resztvevokBemeneti.jovokep, 17, 34),
+      },
+      post: {
+        n: 17,
+        szabalykoveto: sliceArr(resztvevokKimeneti.szabalykoveto, 17, 34),
+        nyitott: sliceArr(resztvevokKimeneti.nyitott, 17, 34),
+        megbizhato: sliceArr(resztvevokKimeneti.megbizhato, 17, 34),
+        jovokep: sliceArr(resztvevokKimeneti.jovokep, 17, 34),
+        elegedettseg: sliceArr(resztvevokKimeneti.elegedettseg, 17, 34),
+      },
+    },
+    szervezok: {
+      pre: {
+        n: 14,
+        kelloInfo: sliceArr(szervezokBemeneti.kelloInfo, 14, 28),
+        onismeret: sliceArr(szervezokBemeneti.onismeret, 14, 28),
+        empatia: sliceArr(szervezokBemeneti.empatia, 14, 28),
+        motivacio: sliceArr(szervezokBemeneti.motivacio, 14, 28),
+        csapatmunka: sliceArr(szervezokBemeneti.csapatmunka, 14, 28),
+        konfliktuskezeles: sliceArr(szervezokBemeneti.konfliktuskezeles, 14, 28),
+        kommunikacio: sliceArr(szervezokBemeneti.kommunikacio, 14, 28),
+      },
+      post: {
+        n: 14,
+        kelloInfo: sliceArr(szervezokKimeneti.kelloInfo, 14, 28),
+        onismeret: sliceArr(szervezokKimeneti.onismeret, 14, 28),
+        empatia: sliceArr(szervezokKimeneti.empatia, 14, 28),
+        motivacio: sliceArr(szervezokKimeneti.motivacio, 14, 28),
+        csapatmunka: sliceArr(szervezokKimeneti.csapatmunka, 14, 28),
+        konfliktuskezeles: sliceArr(szervezokKimeneti.konfliktuskezeles, 14, 28),
+        kommunikacio: sliceArr(szervezokKimeneti.kommunikacio, 14, 28),
+      },
+    },
+  },
+  {
+    name: "Gilvánfa",
+    resztvevok: {
+      pre: {
+        n: 18,
+        szabalykoveto: sliceArr(resztvevokBemeneti.szabalykoveto, 34, 52),
+        nyitott: sliceArr(resztvevokBemeneti.nyitott, 34, 52),
+        megbizhato: sliceArr(resztvevokBemeneti.megbizhato, 34, 52),
+        jovokep: sliceArr(resztvevokBemeneti.jovokep, 34, 52),
+      },
+      post: {
+        n: 11,
+        szabalykoveto: sliceArr(resztvevokKimeneti.szabalykoveto, 34, 45),
+        nyitott: sliceArr(resztvevokKimeneti.nyitott, 34, 45),
+        megbizhato: sliceArr(resztvevokKimeneti.megbizhato, 34, 45),
+        jovokep: sliceArr(resztvevokKimeneti.jovokep, 34, 45),
+        elegedettseg: sliceArr(resztvevokKimeneti.elegedettseg, 34, 45),
+      },
+    },
+    szervezok: {
+      pre: {
+        n: 12,
+        kelloInfo: sliceArr(szervezokBemeneti.kelloInfo, 28, 40),
+        onismeret: sliceArr(szervezokBemeneti.onismeret, 28, 40),
+        empatia: sliceArr(szervezokBemeneti.empatia, 28, 40),
+        motivacio: sliceArr(szervezokBemeneti.motivacio, 28, 40),
+        csapatmunka: sliceArr(szervezokBemeneti.csapatmunka, 28, 40),
+        konfliktuskezeles: sliceArr(szervezokBemeneti.konfliktuskezeles, 28, 40),
+        kommunikacio: sliceArr(szervezokBemeneti.kommunikacio, 28, 40),
+      },
+      post: {
+        n: 12,
+        kelloInfo: sliceArr(szervezokKimeneti.kelloInfo, 28, 40),
+        onismeret: sliceArr(szervezokKimeneti.onismeret, 28, 40),
+        empatia: sliceArr(szervezokKimeneti.empatia, 28, 40),
+        motivacio: sliceArr(szervezokKimeneti.motivacio, 28, 40),
+        csapatmunka: sliceArr(szervezokKimeneti.csapatmunka, 28, 40),
+        konfliktuskezeles: sliceArr(szervezokKimeneti.konfliktuskezeles, 28, 40),
+        kommunikacio: sliceArr(szervezokKimeneti.kommunikacio, 28, 40),
+      },
+    },
+  },
+  {
+    name: "Somogyszentpál",
+    resztvevok: {
+      pre: {
+        n: 18,
+        szabalykoveto: sliceArr(resztvevokBemeneti.szabalykoveto, 52, 70),
+        nyitott: sliceArr(resztvevokBemeneti.nyitott, 52, 70),
+        megbizhato: sliceArr(resztvevokBemeneti.megbizhato, 52, 70),
+        jovokep: sliceArr(resztvevokBemeneti.jovokep, 52, 70),
+      },
+      post: {
+        n: 18,
+        szabalykoveto: sliceArr(resztvevokKimeneti.szabalykoveto, 45, 63),
+        nyitott: sliceArr(resztvevokKimeneti.nyitott, 45, 63),
+        megbizhato: sliceArr(resztvevokKimeneti.megbizhato, 45, 63),
+        jovokep: sliceArr(resztvevokKimeneti.jovokep, 45, 63),
+        elegedettseg: sliceArr(resztvevokKimeneti.elegedettseg, 45, 63),
+      },
+    },
+    szervezok: {
+      pre: {
+        n: 4,
+        kelloInfo: sliceArr(szervezokBemeneti.kelloInfo, 40, 44),
+        onismeret: sliceArr(szervezokBemeneti.onismeret, 40, 44),
+        empatia: sliceArr(szervezokBemeneti.empatia, 40, 44),
+        motivacio: sliceArr(szervezokBemeneti.motivacio, 40, 44),
+        csapatmunka: sliceArr(szervezokBemeneti.csapatmunka, 40, 44),
+        konfliktuskezeles: sliceArr(szervezokBemeneti.konfliktuskezeles, 40, 44),
+        kommunikacio: sliceArr(szervezokBemeneti.kommunikacio, 40, 44),
+      },
+      post: {
+        n: 4,
+        kelloInfo: sliceArr(szervezokKimeneti.kelloInfo, 40, 44),
+        onismeret: sliceArr(szervezokKimeneti.onismeret, 40, 44),
+        empatia: sliceArr(szervezokKimeneti.empatia, 40, 44),
+        motivacio: sliceArr(szervezokKimeneti.motivacio, 40, 44),
+        csapatmunka: sliceArr(szervezokKimeneti.csapatmunka, 40, 44),
+        konfliktuskezeles: sliceArr(szervezokKimeneti.konfliktuskezeles, 40, 44),
+        kommunikacio: sliceArr(szervezokKimeneti.kommunikacio, 40, 44),
+      },
+    },
+  },
+];
+
+// Helyszínenkénti összesítő metrikák
+export interface LocationSummary {
+  name: string;
+  resztvevokPreN: number;
+  resztvevokPostN: number;
+  szervezokN: number;
+  resztvevokMetrics: { name: string; pre: number; post: number; change: number }[];
+  szervezokMetrics: { name: string; pre: number; post: number; change: number }[];
+  elegedettsegAtlag: number;
+}
+
+export function computeLocationSummaries(): LocationSummary[] {
+  return locationData.map(loc => {
+    const rM = [
+      { name: "Szabálykövetés", pre: mean(loc.resztvevok.pre.szabalykoveto), post: mean(loc.resztvevok.post.szabalykoveto) },
+      { name: "Nyitottság", pre: mean(loc.resztvevok.pre.nyitott), post: mean(loc.resztvevok.post.nyitott) },
+      { name: "Megbízhatóság", pre: mean(loc.resztvevok.pre.megbizhato), post: mean(loc.resztvevok.post.megbizhato) },
+      { name: "Jövőkép", pre: mean(loc.resztvevok.pre.jovokep), post: mean(loc.resztvevok.post.jovokep) },
+    ].map(m => ({ ...m, pre: Math.round(m.pre * 100) / 100, post: Math.round(m.post * 100) / 100, change: Math.round((m.post - m.pre) * 100) / 100 }));
+
+    const sM = [
+      { name: "Kellő info", pre: mean(loc.szervezok.pre.kelloInfo), post: mean(loc.szervezok.post.kelloInfo) },
+      { name: "Önismeret", pre: mean(loc.szervezok.pre.onismeret), post: mean(loc.szervezok.post.onismeret) },
+      { name: "Empátia", pre: mean(loc.szervezok.pre.empatia), post: mean(loc.szervezok.post.empatia) },
+      { name: "Motiváció", pre: mean(loc.szervezok.pre.motivacio), post: mean(loc.szervezok.post.motivacio) },
+      { name: "Csapatmunka", pre: mean(loc.szervezok.pre.csapatmunka), post: mean(loc.szervezok.post.csapatmunka) },
+      { name: "Konfliktusk.", pre: mean(loc.szervezok.pre.konfliktuskezeles), post: mean(loc.szervezok.post.konfliktuskezeles) },
+      { name: "Kommunikáció", pre: mean(loc.szervezok.pre.kommunikacio), post: mean(loc.szervezok.post.kommunikacio) },
+    ].map(m => ({ ...m, pre: Math.round(m.pre * 100) / 100, post: Math.round(m.post * 100) / 100, change: Math.round((m.post - m.pre) * 100) / 100 }));
+
+    return {
+      name: loc.name,
+      resztvevokPreN: loc.resztvevok.pre.n,
+      resztvevokPostN: loc.resztvevok.post.n,
+      szervezokN: loc.szervezok.pre.n,
+      resztvevokMetrics: rM,
+      szervezokMetrics: sM,
+      elegedettsegAtlag: Math.round(mean(loc.resztvevok.post.elegedettseg) * 100) / 100,
+    };
+  });
+}
+
+export const locationSummaries = computeLocationSummaries();
+  const n = responses.length;
+  const categories: Record<string, number> = {
+    "Elégedett (nem változtatna)": 0,
+    "Több játékot": 0,
+    "Hosszabb program": 0,
+    "Több forgatás/videó": 0,
+    "Több ilyen program": 0,
+    "Egyéb javaslat": 0,
+  };
+
+  responses.forEach(r => {
+    const low = r.toLowerCase().trim();
+    if (/^(semmi[tn]?|semi|nem|minden.*jó|jó volt|szuper|nagyon jó|minden tökéletes)/.test(low)) {
+      categories["Elégedett (nem változtatna)"]++;
+    } else if (/játék|foci/.test(low)) {
+      categories["Több játékot"]++;
+    } else if (/hosszabb/.test(low)) {
+      categories["Hosszabb program"]++;
+    } else if (/forgat|videó/.test(low)) {
+      categories["Több forgatás/videó"]++;
+    } else if (/több ilyen/.test(low)) {
+      categories["Több ilyen program"]++;
+    } else {
+      categories["Egyéb javaslat"]++;
+    }
+  });
+
+  return Object.entries(categories)
+    .map(([category, count]) => ({ category, count, pct: Math.round((count / n) * 100) }))
+    .filter(c => c.count > 0)
+    .sort((a, b) => b.count - a.count);
+}
