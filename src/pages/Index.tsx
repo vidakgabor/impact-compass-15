@@ -12,6 +12,7 @@ import BogardusSection from "@/components/BogardusSection";
 import ExpectationsSection from "@/components/ExpectationsSection";
 import SignificanceSection from "@/components/SignificanceSection";
 import LocationSection from "@/components/LocationSection";
+import PdfExportButton from "@/components/PdfExportButton";
 
 const fadeIn = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
@@ -140,6 +141,7 @@ function JovokepDistribution() {
 export default function Index() {
   return (
     <div className="min-h-screen bg-background">
+      <PdfExportButton />
       {/* Hero */}
       <header className="bg-primary text-primary-foreground py-16 px-6">
         <div className="max-w-6xl mx-auto">
