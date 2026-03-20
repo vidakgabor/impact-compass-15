@@ -4,34 +4,15 @@ import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-const WATERMARK_TEXT = "Vidák Gábor — Doktori Disszertáció — Rövidtávú Hatásvizsgálat";
+const FOOTER_TEXT = "Vidák Gábor — Részvételi Filmes Workshop — Rövidtávú Hatásvizsgálat";
 
-function addWatermark(pdf: jsPDF, pageWidth: number, pageHeight: number) {
-  pdf.saveGraphicsState();
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(24);
-  pdf.setTextColor(180, 180, 180);
-
-  const cx = pageWidth / 2;
-  const cy = pageHeight / 2;
-  pdf.text(WATERMARK_TEXT, cx, cy, {
-    align: "center",
-    angle: 35,
-    maxWidth: pageWidth * 1.2,
-  });
-  pdf.restoreGraphicsState();
-}
-
-function addFooter(pdf: jsPDF, pageNum: number, totalPages: number, pageWidth: number, pageHeight: number) {
+function addFooter(pdf: jsPDF, pageNum: number, totalPages: number) {
+  const pw = pdf.internal.pageSize.getWidth();
+  const ph = pdf.internal.pageSize.getHeight();
   pdf.setFont("helvetica", "normal");
   pdf.setFontSize(8);
-  pdf.setTextColor(140, 140, 140);
-  pdf.text(
-    `Vidák Gábor — Részvételi Filmes Workshop Hatásvizsgálat | ${pageNum}/${totalPages}`,
-    pageWidth / 2,
-    pageHeight - 6,
-    { align: "center" }
-  );
+  pdf.setTextColor(120, 120, 120);
+  pdf.text(`${FOOTER_TEXT}  |  ${pageNum} / ${totalPages}`, pw / 2, ph - 6, { align: "center" });
 }
 
 export default function PdfExportButton() {
@@ -39,70 +20,139 @@ export default function PdfExportButton() {
 
   const handleExport = useCallback(async () => {
     setExporting(true);
-
     try {
-      const main = document.querySelector("main");
-      if (!main) {
-        console.error("No <main> element found");
-        setExporting(false);
-        return;
+      const mainEl = document.querySelector("main");
+      if (!mainEl) { setExporting(false); return; }
+
+      // Collect all direct section-level children
+      const sections = Array.from(mainEl.children) as HTMLElement[];
+
+      const A4_W = 210; // portrait width mm
+      const A4_H = 297; // portrait height mm
+      const MARGIN = 12;
+      const FOOTER_SPACE = 10;
+
+      interface PageEntry {
+        imgData: string;
+        imgW: number;
+        imgH: number;
+        orientation: "p" | "l";
       }
 
-      // Capture the full main content as a single tall canvas
-      const canvas = await html2canvas(main as HTMLElement, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        logging: false,
-        windowWidth: 1200,
-        // Force a fixed width so charts render properly
-        width: 1200,
-        scrollX: 0,
-        scrollY: 0,
-      });
+      const pages: PageEntry[] = [];
+      let currentPageItems: { imgData: string; w: number; h: number }[] = [];
+      let currentY = 0;
+      const contentW = A4_W - MARGIN * 2;
+      const contentH = A4_H - MARGIN * 2 - FOOTER_SPACE;
+      let isFirstPage = true;
 
-      // A4 dimensions in mm
-      const a4W = 297; // landscape width
-      const a4H = 210; // landscape height
-      const margin = 10;
-      const footerSpace = 10;
-      const usableW = a4W - margin * 2;
-      const usableH = a4H - margin * 2 - footerSpace;
+      const flushPage = (orientation: "p" | "l") => {
+        if (currentPageItems.length === 0) return;
+        // Compose items into a single logical page
+        for (const item of currentPageItems) {
+          pages.push({ imgData: item.imgData, imgW: item.w, imgH: item.h, orientation });
+        }
+        currentPageItems = [];
+        currentY = 0;
+      };
 
-      // Calculate how the canvas maps to pages
-      const imgWidth = usableW;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const pageContentHeight = usableH;
-      const totalPages = Math.ceil(imgHeight / pageContentHeight);
+      for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+        
+        const canvas = await html2canvas(section, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+          windowWidth: 1200,
+          width: 1200,
+          scrollX: 0,
+          scrollY: 0,
+        });
 
-      const pdf = new jsPDF({
-        orientation: "landscape",
-        unit: "mm",
-        format: "a4",
-      });
+        const scaleFactor = contentW / (canvas.width / 2);
+        const sectionHeightMM = (canvas.height / 2) * scaleFactor;
+        const imgData = canvas.toDataURL("image/jpeg", 0.92);
 
-      const imgData = canvas.toDataURL("image/jpeg", 0.92);
+        // Check if section is too wide/tall for portrait — use landscape
+        const needsLandscape = !isFirstPage && sectionHeightMM > contentH * 0.85;
 
-      for (let page = 0; page < totalPages; page++) {
-        if (page > 0) pdf.addPage("a4", "l");
+        if (needsLandscape) {
+          // Flush current portrait items first
+          if (currentPageItems.length > 0) {
+            flushPage("p");
+          }
+          // Landscape page dimensions
+          const lContentW = A4_H - MARGIN * 2; // landscape uses A4_H as width
+          const lContentH = A4_W - MARGIN * 2 - FOOTER_SPACE;
+          const lScale = lContentW / (canvas.width / 2);
+          const lH = (canvas.height / 2) * lScale;
 
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
+          if (lH > lContentH) {
+            // Still too tall even in landscape — split into multiple landscape pages
+            const pxPerPage = (lContentH / lScale) * 2;
+            const totalSlices = Math.ceil(canvas.height / pxPerPage);
+            for (let s = 0; s < totalSlices; s++) {
+              const sliceCanvas = document.createElement("canvas");
+              const sliceH = Math.min(pxPerPage, canvas.height - s * pxPerPage);
+              sliceCanvas.width = canvas.width;
+              sliceCanvas.height = sliceH;
+              const ctx = sliceCanvas.getContext("2d")!;
+              ctx.drawImage(canvas, 0, -s * pxPerPage);
+              const sliceData = sliceCanvas.toDataURL("image/jpeg", 0.92);
+              const sliceMMH = (sliceH / 2) * lScale;
+              pages.push({ imgData: sliceData, imgW: lContentW, imgH: sliceMMH, orientation: "l" });
+            }
+          } else {
+            pages.push({ imgData, imgW: lContentW, imgH: lH, orientation: "l" });
+          }
+        } else {
+          // Portrait mode
+          if (currentY + sectionHeightMM > contentH && currentPageItems.length > 0) {
+            // Won't fit — flush current page
+            flushPage("p");
+          }
+          currentPageItems.push({ imgData, w: contentW, h: sectionHeightMM });
+          currentY += sectionHeightMM + 4; // 4mm gap
+          isFirstPage = false;
+        }
+      }
 
-        // Offset the image upward for each subsequent page
-        const yOffset = margin - page * pageContentHeight;
+      // Flush remaining
+      if (currentPageItems.length > 0) {
+        flushPage("p");
+      }
 
-        // Clip to usable area by using a rectangle mask
-        // jsPDF doesn't have native clipping, so we position the image and rely on page bounds
-        pdf.addImage(imgData, "JPEG", margin, yOffset, imgWidth, imgHeight);
+      if (pages.length === 0) { setExporting(false); return; }
 
-        // White rectangles to mask overflow (top and bottom)
-        pdf.setFillColor(255, 255, 255);
-        pdf.rect(0, 0, pageWidth, margin, "F"); // top margin
-        pdf.rect(0, margin + usableH, pageWidth, pageHeight - margin - usableH, "F"); // bottom
+      // Build PDF
+      const pdf = new jsPDF({ orientation: pages[0].orientation === "l" ? "landscape" : "portrait", unit: "mm", format: "a4" });
+      
+      // Group consecutive items with same orientation that fit on one page
+      let pageIdx = 0;
+      let yOnPage = MARGIN;
+      
+      for (let i = 0; i < pages.length; i++) {
+        const p = pages[i];
+        const isLandscape = p.orientation === "l";
+        const pageW = isLandscape ? A4_H : A4_W;
+        const pageH = isLandscape ? A4_W : A4_H;
+        const maxContentH = pageH - MARGIN * 2 - FOOTER_SPACE;
 
-        addWatermark(pdf, pageWidth, pageHeight);
-        addFooter(pdf, page + 1, totalPages, pageWidth, pageHeight);
+        if (i > 0) {
+          pdf.addPage("a4", isLandscape ? "l" : "p");
+          yOnPage = MARGIN;
+        }
+
+        pdf.addImage(p.imgData, "JPEG", MARGIN, yOnPage, p.imgW, Math.min(p.imgH, maxContentH));
+        pageIdx++;
+      }
+
+      // Add footers
+      const totalPages = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        addFooter(pdf, i, totalPages);
       }
 
       pdf.setProperties({
