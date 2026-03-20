@@ -8,13 +8,10 @@ const WATERMARK_TEXT = "Vidák Gábor — Doktori Disszertáció — Rövidtáv�
 
 function addWatermark(pdf: jsPDF, pageWidth: number, pageHeight: number) {
   pdf.saveGraphicsState();
-  // @ts-ignore — jsPDF typing incomplete for GState
-  pdf.setGState(new jsPDF.API.GState({ opacity: 0.07 }));
   pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(28);
-  pdf.setTextColor(80, 80, 80);
+  pdf.setFontSize(24);
+  pdf.setTextColor(180, 180, 180);
 
-  // Diagonal watermark
   const cx = pageWidth / 2;
   const cy = pageHeight / 2;
   pdf.text(WATERMARK_TEXT, cx, cy, {
@@ -32,29 +29,9 @@ function addFooter(pdf: jsPDF, pageNum: number, totalPages: number, pageWidth: n
   pdf.text(
     `Vidák Gábor — Részvételi Filmes Workshop Hatásvizsgálat | ${pageNum}/${totalPages}`,
     pageWidth / 2,
-    pageHeight - 8,
+    pageHeight - 6,
     { align: "center" }
   );
-}
-
-async function captureSection(
-  el: HTMLElement,
-  scale: number = 2
-): Promise<HTMLCanvasElement> {
-  return html2canvas(el, {
-    scale,
-    useCORS: true,
-    backgroundColor: "#ffffff",
-    logging: false,
-    windowWidth: 1200,
-  });
-}
-
-// Decide orientation based on content aspect ratio
-function getOrientation(canvas: HTMLCanvasElement): "p" | "l" {
-  const ratio = canvas.width / canvas.height;
-  // Use landscape for wide content (charts, tables)
-  return ratio > 1.4 ? "l" : "p";
 }
 
 export default function PdfExportButton() {
@@ -64,72 +41,70 @@ export default function PdfExportButton() {
     setExporting(true);
 
     try {
-      // Grab all top-level sections from <main>
       const main = document.querySelector("main");
-      const header = document.querySelector("header");
-      if (!main) return;
-
-      const sections = Array.from(main.children) as HTMLElement[];
-      const allElements: HTMLElement[] = [];
-      if (header) allElements.push(header as HTMLElement);
-      allElements.push(...sections);
-
-      // First pass: capture all canvases
-      const captures: { canvas: HTMLCanvasElement; orientation: "p" | "l" }[] = [];
-
-      for (const el of allElements) {
-        const canvas = await captureSection(el);
-        const orientation = getOrientation(canvas);
-        captures.push({ canvas, orientation });
+      if (!main) {
+        console.error("No <main> element found");
+        setExporting(false);
+        return;
       }
 
-      if (captures.length === 0) return;
+      // Capture the full main content as a single tall canvas
+      const canvas = await html2canvas(main as HTMLElement, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        windowWidth: 1200,
+        // Force a fixed width so charts render properly
+        width: 1200,
+        scrollX: 0,
+        scrollY: 0,
+      });
 
-      // Build PDF
+      // A4 dimensions in mm
+      const a4W = 297; // landscape width
+      const a4H = 210; // landscape height
+      const margin = 10;
+      const footerSpace = 10;
+      const usableW = a4W - margin * 2;
+      const usableH = a4H - margin * 2 - footerSpace;
+
+      // Calculate how the canvas maps to pages
+      const imgWidth = usableW;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pageContentHeight = usableH;
+      const totalPages = Math.ceil(imgHeight / pageContentHeight);
+
       const pdf = new jsPDF({
-        orientation: captures[0].orientation,
+        orientation: "landscape",
         unit: "mm",
         format: "a4",
       });
 
-      const totalPages = captures.length;
+      const imgData = canvas.toDataURL("image/jpeg", 0.92);
 
-      for (let i = 0; i < captures.length; i++) {
-        const { canvas, orientation } = captures[i];
-
-        if (i > 0) {
-          pdf.addPage("a4", orientation);
-        } else if (orientation !== captures[0].orientation) {
-          // First page orientation already set
-        }
+      for (let page = 0; page < totalPages; page++) {
+        if (page > 0) pdf.addPage("a4", "l");
 
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        const margin = 12;
-        const usableW = pageWidth - margin * 2;
-        const usableH = pageHeight - margin * 2 - 10; // reserve footer
+        // Offset the image upward for each subsequent page
+        const yOffset = margin - page * pageContentHeight;
 
-        const imgRatio = canvas.width / canvas.height;
-        let imgW = usableW;
-        let imgH = imgW / imgRatio;
+        // Clip to usable area by using a rectangle mask
+        // jsPDF doesn't have native clipping, so we position the image and rely on page bounds
+        pdf.addImage(imgData, "JPEG", margin, yOffset, imgWidth, imgHeight);
 
-        if (imgH > usableH) {
-          imgH = usableH;
-          imgW = imgH * imgRatio;
-        }
-
-        const x = margin + (usableW - imgW) / 2;
-        const y = margin;
-
-        const imgData = canvas.toDataURL("image/jpeg", 0.92);
-        pdf.addImage(imgData, "JPEG", x, y, imgW, imgH);
+        // White rectangles to mask overflow (top and bottom)
+        pdf.setFillColor(255, 255, 255);
+        pdf.rect(0, 0, pageWidth, margin, "F"); // top margin
+        pdf.rect(0, margin + usableH, pageWidth, pageHeight - margin - usableH, "F"); // bottom
 
         addWatermark(pdf, pageWidth, pageHeight);
-        addFooter(pdf, i + 1, totalPages, pageWidth, pageHeight);
+        addFooter(pdf, page + 1, totalPages, pageWidth, pageHeight);
       }
 
-      // Title page metadata
       pdf.setProperties({
         title: "Részvételi Filmes Workshop — Rövidtávú Hatásvizsgálat",
         author: "Vidák Gábor",
