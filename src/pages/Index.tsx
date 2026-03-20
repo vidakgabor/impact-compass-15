@@ -141,6 +141,7 @@ function JovokepDistribution() {
 export default function Index() {
   return (
     <div className="min-h-screen bg-background">
+      <PdfExportButton />
       {/* Hero */}
       <header className="bg-primary text-primary-foreground py-16 px-6">
         <div className="max-w-6xl mx-auto">
