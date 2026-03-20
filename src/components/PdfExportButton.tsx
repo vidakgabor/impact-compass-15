@@ -149,7 +149,7 @@ export default function PdfExportButton() {
       }
 
       // Add footers
-      const totalPages = pdf.internal.getNumberOfPages();
+      const totalPages = (pdf as any).internal.getNumberOfPages();
       for (let i = 1; i <= totalPages; i++) {
         pdf.setPage(i);
         addFooter(pdf, i, totalPages);
