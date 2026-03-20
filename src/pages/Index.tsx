@@ -12,6 +12,7 @@ import BogardusSection from "@/components/BogardusSection";
 import ExpectationsSection from "@/components/ExpectationsSection";
 import SignificanceSection from "@/components/SignificanceSection";
 import LocationSection from "@/components/LocationSection";
+import PdfExportButton from "@/components/PdfExportButton";
 
 const fadeIn = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
