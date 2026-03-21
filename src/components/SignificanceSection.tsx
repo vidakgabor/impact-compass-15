@@ -219,7 +219,7 @@ export default function SignificanceSection() {
       </section>
 
       {/* Résztvevők */}
-      <section>
+      <section data-pdf-orientation="landscape">
         <SignificanceTable
           title="Résztvevők — Welch-féle t-próba eredményei"
           results={resztvevokSignificance}
@@ -228,7 +228,7 @@ export default function SignificanceSection() {
       </section>
 
       {/* Szervezők */}
-      <section>
+      <section data-pdf-orientation="landscape">
         <SignificanceTable
           title="Szervezők — Welch-féle t-próba eredményei"
           results={szervezokSignificance}
@@ -237,7 +237,7 @@ export default function SignificanceSection() {
       </section>
 
       {/* Vizualizációk */}
-      <section>
+      <section data-pdf-orientation="landscape">
         <h2 className="section-header mb-6">Hatásméret és szignifikancia vizualizáció</h2>
         <div className="grid md:grid-cols-2 gap-6">
           <EffectSizeChart results={allResults} title="Cohen's d hatásméret — Összes metrika" />
