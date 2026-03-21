@@ -13,6 +13,7 @@ import ExpectationsSection from "@/components/ExpectationsSection";
 import SignificanceSection from "@/components/SignificanceSection";
 import LocationSection from "@/components/LocationSection";
 import PdfExportButton from "@/components/PdfExportButton";
+import DashboardNav from "@/components/DashboardNav";
 
 const fadeIn = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
@@ -158,9 +159,11 @@ export default function Index() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-16">
+      <main data-pdf-root="true" className="max-w-6xl mx-auto px-6 py-12 space-y-16">
+        <DashboardNav />
+
         {/* KPI összefoglaló */}
-        <section>
+        <section id="osszefoglalo" className="dashboard-anchor">
           <h2 className="section-header mb-6">Összefoglaló mutatók</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard label="Résztvevők (bemeneti)" value={resztvevokBemeneti.n} subtitle="Hátrányos helyzetű fiatal" icon={Users} delay={0} />
@@ -171,7 +174,7 @@ export default function Index() {
         </section>
 
         {/* RÉSZTVEVŐK kimeneti extra mutatók */}
-        <section>
+        <section id="resztvevok" className="dashboard-anchor">
           <h2 className="section-header mb-6">Résztvevők — Kimeneti kulcsmutatók</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <StatCard label="Elégedettség" value={`${resztvevokKimenetiExtra.elegedettsegAtlag}/5`} subtitle="Átlagos értékelés" icon={Heart} />
@@ -196,7 +199,7 @@ export default function Index() {
         </section>
 
         {/* SZERVEZŐK kimeneti extra */}
-        <section>
+        <section id="szervezok" className="dashboard-anchor">
           <h2 className="section-header mb-6">Szervezők (ELTE hallgatók) — Kimeneti kulcsmutatók</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard label="Közös hang a célcsoporttal" value={`${szervezokKimenetiExtra.kozosHangAtlag}/5`} icon={Heart} />
@@ -228,7 +231,7 @@ export default function Index() {
         <LocationSection />
 
         {/* BOGARDUS ELŐÍTÉLET MÉRÉS */}
-        <section>
+        <section id="bogardus" className="dashboard-anchor">
           <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
             Bogardus-féle Előítélet Mérés
           </h2>

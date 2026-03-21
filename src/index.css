@@ -99,6 +99,10 @@
 }
 
 @layer components {
+  .dashboard-anchor {
+    scroll-margin-top: 7rem;
+  }
+
   .stat-card {
     @apply bg-card rounded-xl border border-border p-6 shadow-sm transition-all duration-300;
   }
@@ -141,4 +145,39 @@
     background: hsl(var(--chart-post) / 0.15);
     color: hsl(var(--chart-post));
   }
+}
+
+body.pdf-export-mode {
+  background: hsl(0 0% 100%);
+}
+
+body.pdf-export-mode * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+body.pdf-export-mode .stat-card,
+body.pdf-export-mode .stat-card:hover {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+body.pdf-export-mode .overflow-x-auto {
+  overflow: visible !important;
+}
+
+body.pdf-export-mode .recharts-responsive-container,
+body.pdf-export-mode .recharts-wrapper,
+body.pdf-export-mode .recharts-surface {
+  overflow: visible !important;
+}
+
+body.pdf-export-mode table {
+  font-size: 11px;
+}
+
+body.pdf-export-mode th,
+body.pdf-export-mode td {
+  vertical-align: top;
 }
