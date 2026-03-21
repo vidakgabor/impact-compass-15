@@ -186,6 +186,7 @@ export default function PdfExportButton() {
   const [exporting, setExporting] = useState(false);
 
   const handleExport = useCallback(async () => {
+    let restoreVisibility: (() => void) | null = null;
     setExporting(true);
     try {
       const mainEl = document.querySelector("main");
@@ -194,7 +195,7 @@ export default function PdfExportButton() {
         return;
       }
 
-      const restoreVisibility = forceVisibleForExport(mainEl as HTMLElement);
+      restoreVisibility = forceVisibleForExport(mainEl as HTMLElement);
       document.body.classList.add("pdf-export-mode");
       window.dispatchEvent(new Event("resize"));
       await waitForLayout();
@@ -272,6 +273,7 @@ export default function PdfExportButton() {
     } catch (err) {
       console.error("PDF export error:", err);
     } finally {
+      restoreVisibility?.();
       document.body.classList.remove("pdf-export-mode");
       setExporting(false);
     }

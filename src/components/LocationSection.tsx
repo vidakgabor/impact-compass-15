@@ -243,7 +243,7 @@ export default function LocationSection() {
   })[0];
 
   return (
-    <section className="space-y-6">
+    <section id="helyszinek" className="dashboard-anchor space-y-6">
       <div>
         <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
           Helyszínenkénti Bontás

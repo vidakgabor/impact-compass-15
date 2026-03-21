@@ -241,8 +241,6 @@ export default function Index() {
         </section>
         <BogardusSection />
 
-        <div id="helyszinek" className="dashboard-anchor h-0" data-pdf-ignore="true" aria-hidden="true" />
-
         {/* Összegzés */}
         <section className="stat-card bg-primary/5 border-primary/20">
           <h2 className="section-header mb-4">Összegzés és főbb megállapítások</h2>
