@@ -38,6 +38,72 @@ function addFooter(pdf: jsPDF, pageNum: number, totalPages: number) {
   pdf.text(`${FOOTER_TEXT}  |  ${pageNum} / ${totalPages}`, pw / 2, ph - 6, { align: "center" });
 }
 
+function addCoverPage(pdf: jsPDF) {
+  const pw = 210;
+  const ph = 297;
+  const cx = pw / 2;
+
+  // Background accent line
+  pdf.setDrawColor(38, 80, 120);
+  pdf.setLineWidth(1.5);
+  pdf.line(cx - 40, 70, cx + 40, 70);
+
+  // Title
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(32);
+  pdf.setTextColor(30, 45, 70);
+  pdf.text("Impact Dashboard", cx, 90, { align: "center" });
+
+  // Subtitle
+  pdf.setFontSize(18);
+  pdf.setTextColor(60, 80, 110);
+  pdf.text("Részvételi Filmes Program", cx, 108, { align: "center" });
+
+  // Sub-subtitle
+  pdf.setFontSize(14);
+  pdf.setTextColor(80, 100, 130);
+  pdf.text("Rövidtávú hatásvizsgálat", cx, 122, { align: "center" });
+
+  // Divider
+  pdf.setDrawColor(180, 160, 120);
+  pdf.setLineWidth(0.5);
+  pdf.line(cx - 30, 135, cx + 30, 135);
+
+  // Author
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(13);
+  pdf.setTextColor(40, 55, 80);
+  pdf.text("Készítette: Vidák Gábor", cx, 150, { align: "center" });
+
+  // PhD
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(12);
+  pdf.setTextColor(80, 95, 120);
+  pdf.text("Doktori (PhD) kutatás", cx, 162, { align: "center" });
+
+  // Locations
+  pdf.setFontSize(11);
+  pdf.setTextColor(100, 110, 130);
+  pdf.text("Helyszínek: Istvándi  •  Pécs  •  Gilvánfa  •  Somogyszentpál", cx, 180, { align: "center" });
+
+  // Export date
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}. ${String(now.getMonth() + 1).padStart(2, "0")}. ${String(now.getDate()).padStart(2, "0")}.`;
+  pdf.setFontSize(10);
+  pdf.setTextColor(120, 120, 120);
+  pdf.text(`Exportálva: ${dateStr}`, cx, 200, { align: "center" });
+
+  // Bottom watermark
+  pdf.setFontSize(9);
+  pdf.setTextColor(160, 160, 160);
+  pdf.text("Vidák Gábor", cx, ph - 15, { align: "center" });
+
+  // Bottom line
+  pdf.setDrawColor(180, 160, 120);
+  pdf.setLineWidth(0.3);
+  pdf.line(cx - 25, ph - 20, cx + 25, ph - 20);
+}
+
 function waitForLayout() {
   return new Promise<void>((resolve) => {
     requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
@@ -52,21 +118,12 @@ function getContentWidth(orientation: Orientation) {
   return PAGE_SIZES[orientation].width - PAGE_MARGIN * 2;
 }
 
-function getSectionOrientation(section: HTMLElement, isFirstPageCandidate: boolean): Orientation {
+function getSectionOrientation(section: HTMLElement): Orientation {
   if (section.dataset.pdfOrientation === "landscape") return "l";
   if (section.dataset.pdfOrientation === "portrait") return "p";
-  if (isFirstPageCandidate) return "p";
 
-  const hasWideTable = Array.from(section.querySelectorAll("table")).some((table) => {
-    const tableElement = table as HTMLTableElement;
-    return tableElement.scrollWidth > section.clientWidth + 24;
-  });
-
-  const hasDenseChartGrid =
-    section.querySelectorAll(".recharts-responsive-container").length >= 2 &&
-    section.getBoundingClientRect().height > 520;
-
-  return hasWideTable || hasDenseChartGrid ? "l" : "p";
+  // All content pages are landscape by default
+  return "l";
 }
 
 function createSlices(canvas: HTMLCanvasElement, orientation: Orientation): CaptureItem[] {
@@ -211,7 +268,7 @@ export default function PdfExportButton() {
 
       for (let index = 0; index < sections.length; index += 1) {
         const section = sections[index];
-        const orientation = getSectionOrientation(section, index === 0);
+        const orientation = getSectionOrientation(section);
         const canvas = await html2canvas(section, {
           scale: 2,
           useCORS: true,
@@ -237,17 +294,21 @@ export default function PdfExportButton() {
       }
 
       const pages = packPages(capturedItems);
+
+      // Create PDF — first page is always portrait (cover)
       const pdf = new jsPDF({
-        orientation: pages[0].orientation === "l" ? "landscape" : "portrait",
+        orientation: "portrait",
         unit: "mm",
         format: "a4",
         compress: true,
       });
 
-      pages.forEach((page, pageIndex) => {
-        if (pageIndex > 0) {
-          pdf.addPage("a4", page.orientation === "l" ? "landscape" : "portrait");
-        }
+      // Add cover page
+      addCoverPage(pdf);
+
+      // Add content pages
+      pages.forEach((page) => {
+        pdf.addPage("a4", page.orientation === "l" ? "landscape" : "portrait");
 
         let currentY = PAGE_MARGIN;
         page.items.forEach((item, itemIndex) => {
@@ -256,11 +317,15 @@ export default function PdfExportButton() {
         });
       });
 
-      // Add footers
+      // Add footers (skip cover page)
       const totalPages = (pdf as any).internal.getNumberOfPages();
       for (let i = 1; i <= totalPages; i++) {
         pdf.setPage(i);
-        addFooter(pdf, i, totalPages);
+        if (i === 1) {
+          // Cover page already has its own footer
+          continue;
+        }
+        addFooter(pdf, i - 1, totalPages - 1);
       }
 
       pdf.setProperties({
