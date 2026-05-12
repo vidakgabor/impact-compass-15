@@ -147,14 +147,17 @@ export default function Index() {
       <header className="bg-primary text-primary-foreground py-16 px-6">
         <div className="max-w-6xl mx-auto">
           <motion.p className="text-sm uppercase tracking-widest opacity-70 mb-3" initial={{ opacity: 0 }} animate={{ opacity: 0.7 }} transition={{ delay: 0.2 }}>
-            Doktori Disszertáció — Rövidtávú Hatásvizsgálat
+            Doktori disszertáció — Rövid távú eredmények
           </motion.p>
           <motion.h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}>
-            Részvételi Filmes Workshop<br />Hatásvizsgálati Dashboard
+            Részvételi filmes workshopok
           </motion.h1>
-          <motion.p className="text-lg opacity-80 max-w-3xl" initial={{ opacity: 0 }} animate={{ opacity: 0.8 }} transition={{ delay: 0.5 }}>
+          <motion.p className="text-lg opacity-80 max-w-3xl mb-4" initial={{ opacity: 0 }} animate={{ opacity: 0.8 }} transition={{ delay: 0.5 }}>
             A hátrányos helyzetű fiatalok és az ELTE hallgatók bemeneti és kimeneti méréseinek összehasonlító elemzése.
-            Helyszínek: Istvándi, Pécs, Gilvánfa, Somogyszentpál.
+            <br />Helyszínek: Istvándi, Pécs, Gilvánfa, Somogyszentpál.
+          </motion.p>
+          <motion.p className="text-base font-semibold opacity-90" initial={{ opacity: 0 }} animate={{ opacity: 0.9 }} transition={{ delay: 0.6 }}>
+            Vidák Gábor
           </motion.p>
         </div>
       </header>
