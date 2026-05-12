@@ -42,56 +42,59 @@ function addCoverPage(pdf: jsPDF) {
   const pw = 210;
   const ph = 297;
   const cx = pw / 2;
+  const marginX = 30;
+  const textWidth = pw - marginX * 2;
 
-  // Background accent line
+  // Top accent line
   pdf.setDrawColor(38, 80, 120);
   pdf.setLineWidth(1.5);
-  pdf.line(cx - 40, 70, cx + 40, 70);
+  pdf.line(cx - 50, 60, cx + 50, 60);
 
   // Title
   pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(32);
+  pdf.setFontSize(22);
   pdf.setTextColor(30, 45, 70);
-  pdf.text("Impact Dashboard", cx, 90, { align: "center" });
+  const titleLines = pdf.splitTextToSize("Doktori disszertáció — Rövid távú eredmények", textWidth);
+  pdf.text(titleLines, cx, 80, { align: "center" });
 
   // Subtitle
-  pdf.setFontSize(18);
-  pdf.setTextColor(60, 80, 110);
-  pdf.text("Részvételi Filmes Program", cx, 108, { align: "center" });
-
-  // Sub-subtitle
-  pdf.setFontSize(14);
-  pdf.setTextColor(80, 100, 130);
-  pdf.text("Rövidtávú hatásvizsgálat", cx, 122, { align: "center" });
+  pdf.setFontSize(16);
+  pdf.setTextColor(50, 70, 100);
+  pdf.text("Részvételi filmes workshopok", cx, 102, { align: "center" });
 
   // Divider
   pdf.setDrawColor(180, 160, 120);
   pdf.setLineWidth(0.5);
-  pdf.line(cx - 30, 135, cx + 30, 135);
+  pdf.line(cx - 40, 115, cx + 40, 115);
+
+  // Description
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(11);
+  pdf.setTextColor(60, 75, 95);
+  const descLines = pdf.splitTextToSize(
+    "A hátrányos helyzetű fiatalok és az ELTE hallgatók bemeneti és kimeneti méréseinek összehasonlító elemzése.",
+    textWidth,
+  );
+  pdf.text(descLines, cx, 132, { align: "center" });
+
+  // Locations
+  pdf.setFontSize(10);
+  pdf.setTextColor(80, 95, 115);
+  pdf.text("Helyszínek: Istvándi, Pécs, Gilvánfa, Somogyszentpál.", cx, 158, { align: "center" });
 
   // Author
   pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(13);
-  pdf.setTextColor(40, 55, 80);
-  pdf.text("Készítette: Vidák Gábor", cx, 150, { align: "center" });
-
-  // PhD
-  pdf.setFont("helvetica", "normal");
   pdf.setFontSize(12);
-  pdf.setTextColor(80, 95, 120);
-  pdf.text("Doktori (PhD) kutatás", cx, 162, { align: "center" });
-
-  // Locations
-  pdf.setFontSize(11);
-  pdf.setTextColor(100, 110, 130);
-  pdf.text("Helyszínek: Istvándi  •  Pécs  •  Gilvánfa  •  Somogyszentpál", cx, 180, { align: "center" });
+  pdf.setTextColor(40, 55, 80);
+  pdf.text("Vidák Gábor", cx, 178, { align: "center" });
 
   // Export date
   const now = new Date();
   const dateStr = `${now.getFullYear()}. ${String(now.getMonth() + 1).padStart(2, "0")}. ${String(now.getDate()).padStart(2, "0")}.`;
+  pdf.setFont("helvetica", "normal");
   pdf.setFontSize(10);
   pdf.setTextColor(120, 120, 120);
-  pdf.text(`Exportálva: ${dateStr}`, cx, 200, { align: "center" });
+  pdf.text(`Exportálva: ${dateStr}`, cx, 192, { align: "center" });
 
   // Bottom watermark
   pdf.setFontSize(9);
