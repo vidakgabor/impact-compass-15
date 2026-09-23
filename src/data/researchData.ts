@@ -295,22 +295,70 @@ function createSignificanceResult(name: string, group: "Résztvevők" | "Szervez
   };
 }
 
-export const resztvevokSignificance: SignificanceResult[] = [
-  createSignificanceResult("Szabálykövetés", "Résztvevők", resztvevokBemeneti.szabalykoveto, resztvevokKimeneti.szabalykoveto),
-  createSignificanceResult("Nyitottság új dolgokra", "Résztvevők", resztvevokBemeneti.nyitott, resztvevokKimeneti.nyitott),
-  createSignificanceResult("Megbízhatóság, pontosság", "Résztvevők", resztvevokBemeneti.megbizhato, resztvevokKimeneti.megbizhato),
-  createSignificanceResult("Jövőkép (1-3 skála)", "Résztvevők", resztvevokBemeneti.jovokep, resztvevokKimeneti.jovokep),
+// ------------------------------------------------------------
+// LEÍRÓ CSOPORTSZINTŰ ÖSSZEVETÉS
+// A személyenkénti bemeneti–kimeneti párosítás nem igazolt, ezért
+// inferenciális próbát (páros/független t-próba, Wilcoxon) és hatásméretet
+// nem közlünk. Csak n, átlag, SD és a skálapont-különbség szerepel.
+// ------------------------------------------------------------
+
+export interface DescriptiveComparison {
+  name: string;
+  preN: number;
+  postN: number;
+  preMean: number;
+  postMean: number;
+  preSD: number;
+  postSD: number;
+  delta: number;
+}
+
+export function createDescriptive(name: string, pre: number[], post: number[]): DescriptiveComparison {
+  const m1 = mean(pre), m2 = mean(post);
+  const n1 = pre.length, n2 = post.length;
+  const s1 = Math.sqrt(pre.reduce((s, v) => s + (v - m1) ** 2, 0) / (n1 - 1));
+  const s2 = Math.sqrt(post.reduce((s, v) => s + (v - m2) ** 2, 0) / (n2 - 1));
+  return {
+    name, preN: n1, postN: n2,
+    preMean: Math.round(m1 * 100) / 100,
+    postMean: Math.round(m2 * 100) / 100,
+    preSD: Math.round(s1 * 100) / 100,
+    postSD: Math.round(s2 * 100) / 100,
+    delta: Math.round((m2 - m1) * 100) / 100,
+  };
+}
+
+export const METHOD_NOTE =
+  "Leíró csoportszintű összevetés. A személyenkénti párosítás nem igazolt; az eltérések nem bizonyítanak oksági programhatást.";
+
+export const resztvevokDescriptive: DescriptiveComparison[] = [
+  createDescriptive("Szabálykövetés", resztvevokBemeneti.szabalykoveto, resztvevokKimeneti.szabalykoveto),
+  createDescriptive("Nyitottság új dolgokra", resztvevokBemeneti.nyitott, resztvevokKimeneti.nyitott),
+  createDescriptive("Megbízhatóság, pontosság", resztvevokBemeneti.megbizhato, resztvevokKimeneti.megbizhato),
 ];
 
-export const szervezokSignificance: SignificanceResult[] = [
-  createSignificanceResult("Kellő információ a célcsoportról", "Szervezők", szervezokBemeneti.kelloInfo, szervezokKimeneti.kelloInfo),
-  createSignificanceResult("Önismeret", "Szervezők", szervezokBemeneti.onismeret, szervezokKimeneti.onismeret),
-  createSignificanceResult("Empátia", "Szervezők", szervezokBemeneti.empatia, szervezokKimeneti.empatia),
-  createSignificanceResult("Motiváció", "Szervezők", szervezokBemeneti.motivacio, szervezokKimeneti.motivacio),
-  createSignificanceResult("Csapatmunka", "Szervezők", szervezokBemeneti.csapatmunka, szervezokKimeneti.csapatmunka),
-  createSignificanceResult("Konfliktuskezelés", "Szervezők", szervezokBemeneti.konfliktuskezeles, szervezokKimeneti.konfliktuskezeles),
-  createSignificanceResult("Kommunikáció", "Szervezők", szervezokBemeneti.kommunikacio, szervezokKimeneti.kommunikacio),
+export const szervezokDescriptive: DescriptiveComparison[] = [
+  createDescriptive("Információ a célcsoportról", szervezokBemeneti.kelloInfo, szervezokKimeneti.kelloInfo),
+  createDescriptive("Önismeret", szervezokBemeneti.onismeret, szervezokKimeneti.onismeret),
+  createDescriptive("Empátia", szervezokBemeneti.empatia, szervezokKimeneti.empatia),
+  createDescriptive("Motiváció", szervezokBemeneti.motivacio, szervezokKimeneti.motivacio),
+  createDescriptive("Csapatmunka", szervezokBemeneti.csapatmunka, szervezokKimeneti.csapatmunka),
+  createDescriptive("Konfliktuskezelés", szervezokBemeneti.konfliktuskezeles, szervezokKimeneti.konfliktuskezeles),
+  createDescriptive("Kommunikáció", szervezokBemeneti.kommunikacio, szervezokKimeneti.kommunikacio),
 ];
+
+// Jövőkép kategóriamegoszlás (nem egyenlő távolságú skála — csak megoszlásként értelmezhető)
+export const jovokepDistribution = [
+  { label: "Nincs elképzelése", preCount: 29, postCount: 2 },
+  { label: "Részben vannak tervei", preCount: 25, postCount: 18 },
+  { label: "Nagyon konkrét tervei vannak", preCount: 16, postCount: 43 },
+].map(c => ({
+  ...c,
+  prePct: Math.round((c.preCount / 70) * 1000) / 10,
+  postPct: Math.round((c.postCount / 63) * 1000) / 10,
+  diffPp: Math.round(((c.postCount / 63) - (c.preCount / 70)) * 1000) / 10,
+}));
+
 
 // ============================================================
 // ÖSSZESÍTETT EREDMÉNYEK
