@@ -34,11 +34,24 @@ export const resztvevokKimeneti = {
   nemJottKi: [1,1,1,1,1,1,1,1,1,1,1,3,1,2,1,1,2,2,2,3,1,3,1,3,1,2,3,1,1,1,1,1,1,1,4,1,1,4,1,1,1,2,3,1,1,2,1,2,1,1,1,1,1,1,1,1,1,2,1,1,2,1,1],
   // Elégedettség (1-5)
   elegedettseg: [2,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,4,5,5,5,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,2,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],
-  // Szívesen részt venne újra: igen=62, nem=1
-  ujraResztVenne: { igen: 62, nem: 1 },
-  // Részt venne külső programon: igen=62, nem=1
+  // Szívesen részt venne újabb workshopon: 63 igen / 0 nem
+  ujraResztVenne: { igen: 63, nem: 0 },
+  // Külsősökkel újabb közös programon részt venne (külön kérdés): 62 igen / 1 nem
   kulsoProgram: { igen: 62, nem: 1 },
+  // Negatív érzések elmúlása (kimeneti, nevező = minden kimeneti válaszadó, n=63)
+  negativErzesElmult: { igen: 57, reszben: 2, nem: 4 },
 };
+
+// Helyszín soronként (a saját válaszrekord workshop mezőjéből)
+export const resztvevokHelyszinBe: string[] = [
+  ...Array(17).fill("Istvándi"), ...Array(17).fill("Pécs"),
+  ...Array(18).fill("Gilvánfa"), ...Array(18).fill("Somogyszentpál"),
+];
+export const resztvevokHelyszinKi: string[] = [
+  ...Array(17).fill("Istvándi"), ...Array(17).fill("Pécs"),
+  ...Array(11).fill("Gilvánfa"), ...Array(18).fill("Somogyszentpál"),
+];
+
 
 // SZERVEZŐK (ELTE hallgatók)
 // Bemeneti mérés: 44 fő, Kimeneti mérés: 44 fő
