@@ -359,6 +359,23 @@ export const jovokepDistribution = [
   diffPp: Math.round(((c.postCount / 63) - (c.preCount / 70)) * 1000) / 10,
 }));
 
+export const resztvevokSignificance: SignificanceResult[] = [
+  createSignificanceResult("Szabálykövetés", "Résztvevők", resztvevokBemeneti.szabalykoveto, resztvevokKimeneti.szabalykoveto),
+  createSignificanceResult("Nyitottság új dolgokra", "Résztvevők", resztvevokBemeneti.nyitott, resztvevokKimeneti.nyitott),
+  createSignificanceResult("Megbízhatóság, pontosság", "Résztvevők", resztvevokBemeneti.megbizhato, resztvevokKimeneti.megbizhato),
+  createSignificanceResult("Jövőkép (1-3 skála)", "Résztvevők", resztvevokBemeneti.jovokep, resztvevokKimeneti.jovokep),
+];
+
+export const szervezokSignificance: SignificanceResult[] = [
+  createSignificanceResult("Kellő információ a célcsoportról", "Szervezők", szervezokBemeneti.kelloInfo, szervezokKimeneti.kelloInfo),
+  createSignificanceResult("Önismeret", "Szervezők", szervezokBemeneti.onismeret, szervezokKimeneti.onismeret),
+  createSignificanceResult("Empátia", "Szervezők", szervezokBemeneti.empatia, szervezokKimeneti.empatia),
+  createSignificanceResult("Motiváció", "Szervezők", szervezokBemeneti.motivacio, szervezokKimeneti.motivacio),
+  createSignificanceResult("Csapatmunka", "Szervezők", szervezokBemeneti.csapatmunka, szervezokKimeneti.csapatmunka),
+  createSignificanceResult("Konfliktuskezelés", "Szervezők", szervezokBemeneti.konfliktuskezeles, szervezokKimeneti.konfliktuskezeles),
+  createSignificanceResult("Kommunikáció", "Szervezők", szervezokBemeneti.kommunikacio, szervezokKimeneti.kommunikacio),
+];
+
 
 // ============================================================
 // ÖSSZESÍTETT EREDMÉNYEK
