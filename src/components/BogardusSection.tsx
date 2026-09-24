@@ -350,10 +350,7 @@ export default function BogardusSection() {
                 — <strong className="change-positive">+{(bogardusAcceptancePct(roma.post.csalad) - bogardusAcceptancePct(roma.pre.csalad)).toFixed(1)} százalékpont</strong> növekedés a legintimebb szinten
               </li>
               <li>
-                <strong className="text-foreground">A workshop hatása:</strong> A Roma csoporttal szembeni legintimebb társadalmi távolság (családtag) szintjén a legnagyobb pozitív elmozdulás figyelhető meg, ami a közvetlen kontaktus előítélet-csökkentő hatását igazolja
-              </li>
-              <li>
-                <strong className="text-foreground">H7 hipotézis:</strong> Az eredmények alátámasztják, hogy a részvételi filmezés mint közvetlen kontaktus-módszer csökkenti a Roma közösséggel szembeni társadalmi távolságot
+                <strong className="text-foreground">Értelmezés:</strong> A családtag szinten több megjelölés, a többi kapcsolati helyzetben kevesebb — vegyes mintázat; programhatás nem igazolt.
               </li>
             </ul>
           </div>
