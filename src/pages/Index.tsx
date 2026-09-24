@@ -45,7 +45,7 @@ function MetricRow({ m, idx }: { m: ComparisonMetric; idx: number }) {
       <td className="py-3 px-4 text-center">
         <span className={`inline-flex items-center gap-1 font-semibold ${isPositive ? "change-positive" : "change-negative"}`}>
           {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-          {isPositive ? "+" : ""}{m.changePct}%
+          n: {m.preN} → {m.postN}
         </span>
       </td>
       <td className="py-3 pl-4 text-center text-muted-foreground text-sm">{m.preSD.toFixed(2)} → {m.postSD.toFixed(2)}</td>
@@ -251,9 +251,9 @@ export default function Index() {
             <div>
               <h3 className="font-bold text-base mb-2 text-primary">Résztvevők (hátrányos helyzetű fiatalok)</h3>
               <ul className="space-y-2 list-disc list-inside text-muted-foreground">
-                <li><strong className="text-foreground">Nyitottság:</strong> Az egyik legnagyobb változás — {resztvevokMetrics[1].preMean.toFixed(2)} → {resztvevokMetrics[1].postMean.toFixed(2)} ({resztvevokMetrics[1].changePct > 0 ? "+" : ""}{resztvevokMetrics[1].changePct}%)</li>
-                <li><strong className="text-foreground">Megbízhatóság:</strong> Jelentős javulás — {resztvevokMetrics[2].preMean.toFixed(2)} → {resztvevokMetrics[2].postMean.toFixed(2)} ({resztvevokMetrics[2].changePct > 0 ? "+" : ""}{resztvevokMetrics[2].changePct}%)</li>
-                <li><strong className="text-foreground">Jövőkép:</strong> Markáns pozitív elmozdulás — {resztvevokMetrics[3].preMean.toFixed(2)} → {resztvevokMetrics[3].postMean.toFixed(2)} ({resztvevokMetrics[3].changePct > 0 ? "+" : ""}{resztvevokMetrics[3].changePct}%)</li>
+                <li><strong className="text-foreground">Nyitottság:</strong> Magasabb kimeneti átlag — {resztvevokMetrics[1].preMean.toFixed(2)} → {resztvevokMetrics[1].postMean.toFixed(2)}</li>
+                <li><strong className="text-foreground">Megbízhatóság:</strong> Magasabb kimeneti átlag — {resztvevokMetrics[2].preMean.toFixed(2)} → {resztvevokMetrics[2].postMean.toFixed(2)}</li>
+                <li><strong className="text-foreground">Jövőkép:</strong> Kedvezőbb kimeneti megoszlás — konkrét tervek: 22,9% → 68,3% (+45,4 százalékpont)</li>
                 <li><strong className="text-foreground">Elégedettség:</strong> Kiemelkedően magas — átlag {resztvevokKimenetiExtra.elegedettsegAtlag}/5</li>
                 <li><strong className="text-foreground">{resztvevokKimenetiExtra.ujraResztVennePct}%</strong> szívesen részt venne újabb workshopon</li>
                 <li><strong className="text-foreground">Alacsony konfliktusszint:</strong> A szervezőkkel való megértés átlaga mindössze {resztvevokKimenetiExtra.nemErtetteAtlag}/5</li>
@@ -262,12 +262,12 @@ export default function Index() {
             <div>
               <h3 className="font-bold text-base mb-2 text-primary">Szervezők (ELTE hallgatók)</h3>
               <ul className="space-y-2 list-disc list-inside text-muted-foreground">
-                <li><strong className="text-foreground">Információ a célcsoportról:</strong> Legnagyobb fejlődés — {szervezokMetrics[0].preMean.toFixed(2)} → {szervezokMetrics[0].postMean.toFixed(2)} ({szervezokMetrics[0].changePct > 0 ? "+" : ""}{szervezokMetrics[0].changePct}%)</li>
-                <li><strong className="text-foreground">Kommunikáció:</strong> {szervezokMetrics[6].preMean.toFixed(2)} → {szervezokMetrics[6].postMean.toFixed(2)} ({szervezokMetrics[6].changePct > 0 ? "+" : ""}{szervezokMetrics[6].changePct}%)</li>
-                <li><strong className="text-foreground">Csapatmunka:</strong> {szervezokMetrics[4].preMean.toFixed(2)} → {szervezokMetrics[4].postMean.toFixed(2)} ({szervezokMetrics[4].changePct > 0 ? "+" : ""}{szervezokMetrics[4].changePct}%)</li>
+                <li><strong className="text-foreground">Információ a célcsoportról:</strong> Legnagyobb skálapont-különbség — {szervezokMetrics[0].preMean.toFixed(2)} → {szervezokMetrics[0].postMean.toFixed(2)}</li>
+                <li><strong className="text-foreground">Kommunikáció:</strong> {szervezokMetrics[6].preMean.toFixed(2)} → {szervezokMetrics[6].postMean.toFixed(2)}</li>
+                <li><strong className="text-foreground">Csapatmunka:</strong> {szervezokMetrics[4].preMean.toFixed(2)} → {szervezokMetrics[4].postMean.toFixed(2)}</li>
                 <li><strong className="text-foreground">Konfliktuskezelés:</strong> {szervezokMetrics[5].preMean.toFixed(2)} → {szervezokMetrics[5].postMean.toFixed(2)}</li>
                 <li><strong className="text-foreground">{szervezokKimenetiExtra.sokkNemPct}%</strong>-ot nem sokkolta az első találkozás a célcsoporttal</li>
-                <li><strong className="text-foreground">Minden kompetencia-dimenzióban pozitív elmozdulás</strong> figyelhető meg</li>
+                <li><strong className="text-foreground">Minden önértékelési dimenzióban magasabb kimeneti átlag</strong> (leíró csoportszintű összevetés)</li>
               </ul>
             </div>
           </div>
@@ -279,7 +279,7 @@ export default function Index() {
                   <p className="font-semibold text-foreground">RQ1 — Rövid távú pedagógiai hatások (HH fiatalok)</p>
                   <p className="italic">Milyen rövid távú változások azonosíthatók a tanulási motivációban, önhatékonyság-érzetben és szociális kompetenciákban?</p>
                   <p className="mt-1"><strong className="text-foreground">H1:</strong> A workshopot követően a résztvevők tanulási motiváció- és önhatékonyság-értékei szignifikáns pozitív irányú elmozdulást mutatnak a bemeneti méréshez képest.</p>
-                  <p className="mt-1 change-positive text-xs font-semibold">✓ Alátámasztva — A nyitottság ({resztvevokMetrics[1].changePct > 0 ? "+" : ""}{resztvevokMetrics[1].changePct}%), megbízhatóság ({resztvevokMetrics[2].changePct > 0 ? "+" : ""}{resztvevokMetrics[2].changePct}%) és jövőkép ({resztvevokMetrics[3].changePct > 0 ? "+" : ""}{resztvevokMetrics[3].changePct}%) szignifikáns pozitív elmozdulást mutat.</p>
+                  <p className="mt-1 change-positive text-xs font-semibold">Leíró szinten kedvező irány — magasabb kimeneti átlag: nyitottság (Δ {resztvevokMetrics[1].change > 0 ? "+" : ""}{resztvevokMetrics[1].change.toFixed(2)}), megbízhatóság (Δ {resztvevokMetrics[2].change > 0 ? "+" : ""}{resztvevokMetrics[2].change.toFixed(2)} skálapont); konkrét jövőtervek +45,4 százalékpont. A személyenkénti párosítás nem igazolt, szignifikanciapróba nem közölhető.</p>
                 </div>
                 <div>
                   <p className="font-semibold text-foreground">RQ2 — Hosszútávú hatások (HH fiatalok)</p>
