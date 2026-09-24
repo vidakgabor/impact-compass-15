@@ -350,10 +350,7 @@ export default function BogardusSection() {
                 — <strong className="change-positive">+{(bogardusAcceptancePct(roma.post.csalad) - bogardusAcceptancePct(roma.pre.csalad)).toFixed(1)} százalékpont</strong> növekedés a legintimebb szinten
               </li>
               <li>
-                <strong className="text-foreground">A workshop hatása:</strong> A Roma csoporttal szembeni legintimebb társadalmi távolság (családtag) szintjén a legnagyobb pozitív elmozdulás figyelhető meg, ami a közvetlen kontaktus előítélet-csökkentő hatását igazolja
-              </li>
-              <li>
-                <strong className="text-foreground">H7 hipotézis:</strong> Az eredmények alátámasztják, hogy a részvételi filmezés mint közvetlen kontaktus-módszer csökkenti a Roma közösséggel szembeni társadalmi távolságot
+                <strong className="text-foreground">Értelmezés:</strong> A családtag szinten több megjelölés, a többi kapcsolati helyzetben kevesebb — vegyes mintázat; programhatás nem igazolt.
               </li>
             </ul>
           </div>
@@ -379,10 +376,7 @@ export default function BogardusSection() {
         </div>
         <div className="mt-6 p-4 rounded-lg bg-accent/10 border border-accent/20">
           <p className="text-sm font-medium text-foreground">
-            <strong>Fő megállapítás:</strong> A Bogardus-skálán mért eredmények azt mutatják, hogy a részvételi filmes workshop után a Roma csoporttal szembeni
-            társadalmi távolság a legintimebb szinten (családtag) szignifikánsan csökkent ({bogardusAcceptancePct(roma.pre.csalad)}% → {bogardusAcceptancePct(roma.post.csalad)}%).
-            A hajléktalan csoportnál — ahol a kezdeti előítélet a legnagyobb volt — szintén pozitív elmozdulás történt.
-            Ez alátámasztja a kontaktus-hipotézis érvényességét a részvételi filmezés kontextusában.
+            <strong>Fő megállapítás:</strong> A megjelölések (n=44/44) csoportonként és kapcsolati helyzetenként vegyes irányúak. A Roma csoportnál családtagként több (36→40), barátként, munkatársként és szomszédként kevesebb megjelölés szerepel; egységes előítélet-csökkenés nem állítható. A nem jelölés nem feltétlenül kifejezett elutasítás. Leíró összevetés, oksági hatás nem igazolt.
           </p>
         </div>
       </section>
