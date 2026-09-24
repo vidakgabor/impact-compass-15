@@ -379,10 +379,7 @@ export default function BogardusSection() {
         </div>
         <div className="mt-6 p-4 rounded-lg bg-accent/10 border border-accent/20">
           <p className="text-sm font-medium text-foreground">
-            <strong>Fő megállapítás:</strong> A Bogardus-skálán mért eredmények azt mutatják, hogy a részvételi filmes workshop után a Roma csoporttal szembeni
-            társadalmi távolság a legintimebb szinten (családtag) szignifikánsan csökkent ({bogardusAcceptancePct(roma.pre.csalad)}% → {bogardusAcceptancePct(roma.post.csalad)}%).
-            A hajléktalan csoportnál — ahol a kezdeti előítélet a legnagyobb volt — szintén pozitív elmozdulás történt.
-            Ez alátámasztja a kontaktus-hipotézis érvényességét a részvételi filmezés kontextusában.
+            <strong>Fő megállapítás:</strong> A megjelölések (n=44/44) csoportonként és kapcsolati helyzetenként vegyes irányúak. A Roma csoportnál családtagként több (36→40), barátként, munkatársként és szomszédként kevesebb megjelölés szerepel; egységes előítélet-csökkenés nem állítható. A nem jelölés nem feltétlenül kifejezett elutasítás. Leíró összevetés, oksági hatás nem igazolt.
           </p>
         </div>
       </section>
