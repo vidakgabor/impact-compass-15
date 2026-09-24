@@ -65,7 +65,7 @@ function ComparisonTable({ title, metrics, preN, postN }: { title: string; metri
             <th className="py-2 px-4 font-semibold text-muted-foreground">Bemeneti átlag</th>
             <th className="py-2 px-4 font-semibold text-muted-foreground">Kimeneti átlag</th>
             <th className="py-2 px-4 font-semibold text-muted-foreground">Változás</th>
-            <th className="py-2 px-4 font-semibold text-muted-foreground">Változás %</th>
+            <th className="py-2 px-4 font-semibold text-muted-foreground">Elemszám (n)</th>
             <th className="py-2 pl-4 font-semibold text-muted-foreground">SD (be→ki)</th>
           </tr>
         </thead>
@@ -293,7 +293,7 @@ export default function Index() {
                   <p className="font-semibold text-foreground">RQ3 — Attitűdváltozás (egyetemi hallgatók)</p>
                   <p className="italic">Kimutatható-e változás a romákkal szembeni társadalmi távolságban a Bogardus-skála alapján?</p>
                   <p className="mt-1"><strong className="text-foreground">H3a:</strong> A workshopot követően csökken a romákkal szembeni társadalmi távolság mértéke a bemeneti méréshez képest.</p>
-                  <p className="mt-1 change-positive text-xs font-semibold">✓ Alátámasztva — A Bogardus-skálán a romákkal szembeni társadalmi távolság csökkent.</p>
+                  <p className="mt-1 change-positive text-xs font-semibold">Vegyes mintázat — a romák megjelölése kapcsolati helyzetenként eltérő irányú (családtag 36→40, barát 42→39, munkatárs 40→36, szomszéd 40→38; n=44/44). Egységes előítélet-csökkenés nem állítható.</p>
                   <p className="mt-2"><strong className="text-foreground">H3b:</strong> Az attitűdváltozás mértéke pozitív összefüggést mutat a résztvevők által jelzett bevonódási szinttel.</p>
                   <p className="mt-1 text-xs font-semibold text-muted-foreground">⏳ Részletes elemzés a hosszútávú vizsgálatban.</p>
                 </div>
